@@ -16,9 +16,9 @@ public class World {
 	public World(double width, double hight) {
 		this.width = width;
 		this.hight = hight;
-		this.bullet = new Bullet(new Point2D(0, 0), new Point2D(30, 30), new Point2D(0, -9.81));
-		this.bullet2 = new BulletAnimated(new Point2D(0, 0), new Point2D(30, 70), new Point2D(0, -9.81));
-		this.cannon = new Cannon(new Point2D(0, 0), 45);
+		bullet = new Bullet(this, new Point2D(0, 0), new Point2D(30, 30), new Point2D(0, -9.81));
+		bullet2 = new BulletAnimated(this, new Point2D(0, 0), new Point2D(30, 70), new Point2D(0, -9.81));
+		cannon = new Cannon(this, new Point2D(0, 0), 45);
 	}
 
 	public void draw(GraphicsContext gc) {
@@ -28,15 +28,15 @@ public class World {
 		// Change coordinate system to human like
 		gc.scale(1, -1);
 		gc.translate(0, -hight);
-		this.bullet.draw(gc);
-		this.bullet2.draw(gc);
-		this.cannon.draw(gc);
+		bullet.draw(gc);
+		bullet2.draw(gc);
+		cannon.draw(gc);
 		gc.restore();
 	}
 
 	public void simulate(double deltaT) {
-		this.bullet.simulate(deltaT);
-		this.bullet2.simulate(deltaT);
-		this.cannon.simulate(deltaT);
+		bullet.simulate(deltaT);
+		bullet2.simulate(deltaT);
+		cannon.simulate(deltaT);
 	}
 }

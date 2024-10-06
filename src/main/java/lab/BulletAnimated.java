@@ -7,9 +7,11 @@ import javafx.scene.image.Image;
 public class BulletAnimated {
 
 	private static final double SIZE = 40;
+	private final World world;
 	private Image image = new Image(this.getClass().getResourceAsStream("fireball-transparent.gif"));
 
-	public BulletAnimated(Point2D position, Point2D velocity, Point2D acceleration) {
+	public BulletAnimated(World world, Point2D position, Point2D velocity, Point2D acceleration) {
+		this.world = world;
 		this.position = position;
 		this.velocity = velocity;
 		this.acceleration = acceleration;

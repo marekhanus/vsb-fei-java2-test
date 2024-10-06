@@ -9,10 +9,12 @@ public class Bullet {
 
 	private final Point2D acceleration;
 
+	private final World world;
 	private Point2D position;
 	private Point2D velocity;
 
-	public Bullet(Point2D position, Point2D velocity, Point2D acceleration) {
+	public Bullet(World world, Point2D position, Point2D velocity, Point2D acceleration) {
+		this.world = world;
 		this.position = position;
 		this.velocity = velocity;
 		this.acceleration = acceleration;
