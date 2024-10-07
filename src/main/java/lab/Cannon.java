@@ -13,7 +13,7 @@ public class Cannon {
 	private final World world;
 	private Point2D position;
 	private double angle;
-	private double angleDelta = 25;
+	private double angleDelta = -25;
 
 	public Cannon(World world, Point2D position, double angle) {
 		this.world = world;
@@ -32,7 +32,7 @@ public class Cannon {
 	public void simulate(double deltaT) {
 		// do nothing yet
 		angle += angleDelta * deltaT;
-		if (angle >= 90 || angle <= 0) {
+		if (angle >= 0 || angle <= -90) {
 			angleDelta = -angleDelta;
 		}
 	}
