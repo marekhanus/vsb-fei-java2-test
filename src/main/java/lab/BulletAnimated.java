@@ -1,6 +1,7 @@
 package lab;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -19,6 +20,7 @@ public class BulletAnimated {
 
 	public void draw(GraphicsContext gc) {
 		gc.drawImage(image, getPosition().getX(), getPosition().getY(), SIZE, SIZE);
+		gc.strokeRect(position.getX(), position.getY(), SIZE, SIZE);
 	}
 
 	private final Point2D acceleration;
@@ -33,6 +35,10 @@ public class BulletAnimated {
 
 	protected Point2D getPosition() {
 		return position;
+	}
+
+	public Rectangle2D getBoundingBox() {
+		return new Rectangle2D(position.getX(), position.getY(), SIZE,SIZE); 
 	}
 
 }
