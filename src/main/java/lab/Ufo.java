@@ -7,44 +7,54 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class Ufo {
+public class Ufo extends WorldEntity implements Collisionable {
 
 	private static final Random RANDOM = new Random();
 	private Image image = new Image(this.getClass().getResourceAsStream("ufo-small.gif"));
-	private final World world;
-	private Point2D position;
 	private Point2D velocity;
 
 	public Ufo(World world) {
-		this(world, 
-				new Point2D(RANDOM.nextDouble(world.getWidth()), 
-						RANDOM.nextDouble(0, world.getHeight()*0.3)), 
+		this(world, new Point2D(RANDOM.nextDouble(world.getWidth()), RANDOM.nextDouble(0, world.getHeight() * 0.3)),
 				new Point2D(RANDOM.nextDouble(70, 150), 0));
 	}
 
 	public Ufo(World world, Point2D position, Point2D velocity) {
-		this.world = world;
-		this.position = position;
+		super(world, position);
 		this.velocity = velocity;
 	}
 
-	public void draw(GraphicsContext gc) {
+	@Override
+	public void drawInternal(GraphicsContext gc) {
 		gc.drawImage(image, getPosition().getX(), getPosition().getY());
 	}
 
-	public void changeDirection(){
+	public void changeDirection() {
 		velocity = velocity.multiply(-1);
 	}
+
+	@Override
 	public void simulate(double deltaT) {
 		position = position.add(velocity.multiply(deltaT));
-		position = new Point2D(position.getX()%world.getWidth(), position.getY());
+		position = new Point2D(position.getX() % world.getWidth(), position.getY());
+		if(position.getX() < -image.getWidth()) {
+			position = new Point2D(world.getWidth(), position.getY());
+		}
 	}
 
-	protected Point2D getPosition() {
-		return position;
-	}
-	
+	@Override
 	public Rectangle2D getBoundingBox() {
-		return new Rectangle2D(position.getX(), position.getY(), image.getWidth(), image.getHeight()); 
+		return new Rectangle2D(position.getX(), position.getY(), image.getWidth(), image.getHeight());
+	}
+
+	@Override
+	public boolean intersect(Rectangle2D another) {
+		return getBoundingBox().intersects(another);
+	}
+
+	@Override
+	public void hitBy(Collisionable another) {
+		if(another instanceof BulletAnimated || another instanceof Bullet) {
+			changeDirection();
+		}
 	}
 }

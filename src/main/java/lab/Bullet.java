@@ -1,36 +1,47 @@
 package lab;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Bullet {
+public class Bullet extends WorldEntity implements Collisionable{
 	private static final double SIZE = 20;
 
-	private final Point2D acceleration;
-
-	private final World world;
-	private Point2D position;
-	private Point2D velocity;
+	protected final Point2D acceleration;
+	protected Point2D velocity;
 
 	public Bullet(World world, Point2D position, Point2D velocity, Point2D acceleration) {
-		this.world = world;
-		this.position = position;
+		super(world, position);
 		this.velocity = velocity;
 		this.acceleration = acceleration;
 	}
 
-	public void draw(GraphicsContext gc) {
+	@Override
+	public void drawInternal(GraphicsContext gc) {
 		gc.setFill(Color.SILVER);
 		gc.fillOval(position.getX(), position.getY(), SIZE, SIZE);
 	}
 
+	@Override
 	public void simulate(double deltaT) {
 		position = position.add(velocity.multiply(deltaT));
 		velocity = velocity.add(acceleration.multiply(deltaT));
 	}
 
-	protected Point2D getPosition() {
-		return position;
+	@Override
+	public Rectangle2D getBoundingBox() {
+		return new Rectangle2D(position.getX(), position.getY(), SIZE, SIZE);
 	}
+
+	@Override
+	public boolean intersect(Rectangle2D another) {
+		return getBoundingBox().intersects(another);
+	}
+
+	@Override
+	public void hitBy(Collisionable another) {
+		
+	}
+
 }

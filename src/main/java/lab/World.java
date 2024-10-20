@@ -11,20 +11,19 @@ public class World {
 
 	private final double height;
 
-	private final Bullet bullet;
-	private final BulletAnimated bullet2;
-	private final Cannon cannon;
-	private Ufo[] ufos;
+	private DrawableSimulable[] entities;
 
 	public World(double width, double height) {
 		this.width = width;
 		this.height = height;
-		bullet = new Bullet(this, new Point2D(0, height), new Point2D(30, -30), new Point2D(0, 9.81));
-		bullet2 = new BulletAnimated(this, new Point2D(0, height), new Point2D(50, -80), new Point2D(0, 9.81));
-		cannon = new Cannon(this, new Point2D(0, height-20), -45);
-		ufos = new Ufo[5];
-		for (int i = 0; i < ufos.length; i++) {
-			ufos[i] = new Ufo(this);
+		entities = new DrawableSimulable[8];
+		Cannon cannon = new Cannon(this, new Point2D(0, height - 20), -45);
+		entities[0] = cannon;
+		entities[1] = new Bullet(this, new Point2D(0, height), new Point2D(30, -30), new Point2D(0, 9.81));
+		entities[2] = new BulletAnimated(this, cannon, new Point2D(0, height), new Point2D(50, -80),
+				new Point2D(0, 9.81));
+		for (int i = 3; i < entities.length; i++) {
+			entities[i] = new Ufo(this);
 		}
 	}
 
@@ -32,25 +31,26 @@ public class World {
 		gc.clearRect(0, 0, width, height);
 
 		gc.save();
-		bullet.draw(gc);
-		bullet2.draw(gc);
-		cannon.draw(gc);
-		for (int i = 0; i < ufos.length; i++) {
-			ufos[i].draw(gc);
+		for (DrawableSimulable entity : entities) {
+			entity.draw(gc);
 		}
 		gc.restore();
 	}
 
 	public void simulate(double deltaT) {
-		bullet.simulate(deltaT);
-		bullet2.simulate(deltaT);
-		cannon.simulate(deltaT);
-		for (int i = 0; i < ufos.length; i++) {
-			ufos[i].simulate(deltaT);
+		for (DrawableSimulable entity : entities) {
+			entity.simulate(deltaT);
 		}
-		for (Ufo ufo : ufos) {
-			if(ufo.getBoundingBox().intersects(bullet2.getBoundingBox())) {
-				ufo.changeDirection();
+		for (int i = 0; i < entities.length; i++) {
+			if (entities[i] instanceof Collisionable c1) {
+				for (int j = i + 1; j < entities.length; j++) {
+					if (entities[j] instanceof Collisionable c2) {
+						if (c1.intersect(c2.getBoundingBox())) {
+							c1.hitBy(c2);
+							c2.hitBy(c1);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -62,5 +62,5 @@ public class World {
 	public double getHeight() {
 		return height;
 	}
-	
+
 }
