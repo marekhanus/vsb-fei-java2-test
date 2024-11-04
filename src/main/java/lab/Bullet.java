@@ -44,4 +44,8 @@ public class Bullet extends WorldEntity implements Collisionable{
 		
 	}
 
+	public void setVelocity(Point2D velocity) {
+		this.velocity = velocity;
+	}
+
 }

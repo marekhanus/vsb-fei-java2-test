@@ -31,4 +31,8 @@ public class DrawingThread extends AnimationTimer {
 		lastTime = now;
 	}
 
+	public World getWorld() {
+		return world;
+	}
+
 }

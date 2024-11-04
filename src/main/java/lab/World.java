@@ -12,16 +12,19 @@ public class World {
 	private final double height;
 
 	private DrawableSimulable[] entities;
+	private Cannon cannon;
+	private BulletAnimated bulletAnimated;
 
 	public World(double width, double height) {
 		this.width = width;
 		this.height = height;
 		entities = new DrawableSimulable[8];
-		Cannon cannon = new Cannon(this, new Point2D(0, height - 20), -45);
+		cannon = new Cannon(this, new Point2D(0, height - 20), -45);
+		bulletAnimated = new BulletAnimated(this, cannon, new Point2D(0, height), new Point2D(50, -80),
+				new Point2D(0, 9.81));
 		entities[0] = cannon;
 		entities[1] = new Bullet(this, new Point2D(0, height), new Point2D(30, -30), new Point2D(0, 9.81));
-		entities[2] = new BulletAnimated(this, cannon, new Point2D(0, height), new Point2D(50, -80),
-				new Point2D(0, 9.81));
+		entities[2] = bulletAnimated;
 		for (int i = 3; i < entities.length; i++) {
 			entities[i] = new Ufo(this);
 		}
@@ -61,6 +64,14 @@ public class World {
 
 	public double getHeight() {
 		return height;
+	}
+
+	public Cannon getCannon() {
+		return cannon;
+	}
+
+	public BulletAnimated getBulletAnimated() {
+		return bulletAnimated;
 	}
 
 }

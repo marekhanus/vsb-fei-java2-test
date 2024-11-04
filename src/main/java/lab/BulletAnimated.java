@@ -33,7 +33,7 @@ public class BulletAnimated extends Bullet {
 
 	public void reload() {
 		position = cannon.getPosition();
-		velocity = initVelocity;
+		velocity = new Point2D(0, 0);
 	}
-
+	
 }

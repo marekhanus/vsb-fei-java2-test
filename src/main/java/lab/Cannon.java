@@ -27,9 +27,18 @@ public class Cannon extends WorldEntity{
 
 	@Override
 	public void simulate(double deltaT) {
-		angle += angleDelta * deltaT;
-		if (angle >= 0 || angle <= -90) {
-			angleDelta = -angleDelta;
-		}
+//		angle += angleDelta * deltaT;
+//		if (angle >= 0 || angle <= -90) {
+//			angleDelta = -angleDelta;
+//		}
 	}
+
+	public double getAngle() {
+		return angle;
+	}
+
+	public void setAngle(double angle) {
+		this.angle = -angle;
+	}
+	
 }
