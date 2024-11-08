@@ -54,7 +54,7 @@ public class Ufo extends WorldEntity implements Collisionable {
 	@Override
 	public void hitBy(Collisionable another) {
 		if(another instanceof BulletAnimated || another instanceof Bullet) {
-			changeDirection();
+			world.remove(this);
 		}
 	}
 }

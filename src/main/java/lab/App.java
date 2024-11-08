@@ -15,6 +15,9 @@ import javafx.stage.WindowEvent;
  */
 public class App extends Application {
 
+	static {
+		System.out.println("aaa");
+	}
 	private GameController gameController;
 	public static void main(String[] args) {
 		launch(args);

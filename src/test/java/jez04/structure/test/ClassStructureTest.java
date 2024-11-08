@@ -3,13 +3,23 @@ package jez04.structure.test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,191 +34,100 @@ import org.reflections.util.ConfigurationBuilder;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.GraphicsContext;
 
 class ClassStructureTest {
 
-	private static final String drawableSimulableName = "DrawableSimulable";
-	private static final String collisionableName = "Collisionable";
-
-	Set<String> allClasses = getNameOfAllClasses();
+	StructureHelper helper = new StructureHelper();
 
 	@Test
 	void gameControllerExistenceTest() {
-		classExist("GameController");
-		Class<?> c = getClass("GameController");
-		hasPropertyWithAnnotation(c, ".*", FXML.class);
-		hasMethodRegexp(c, ".*", void.class, ActionEvent.class);
+		helper.classExist("GameController");
 	}
+
 	@Test
 	void gameControllerFxmlTest() {
-		classExist("GameController");
-		Class<?> c = getClass("GameController");
-		hasPropertyWithAnnotation(c, ".*", FXML.class);
-	}
-	@Test
-	void gameControllerActionEventTest() {
-		classExist("GameController");
-		Class<?> c = getClass("GameController");
-		hasMethodRegexp(c, ".*", void.class, ActionEvent.class);
+		helper.classExist("GameController");
+		Class<?> c = helper.getClass("GameController");
+		helper.hasPropertyWithAnnotation(c, ".*", FXML.class);
 	}
 
 	@Test
-	void cannonExistenceTest() {
-		classExist("Cannon");
+	void gameControllerActionMethodTest() {
+		helper.classExist("GameController");
+		Class<?> c = helper.getClass("GameController");
+		helper.hasMethodRegexp(c, ".*", void.class, ActionEvent.class);
 	}
+
 	@Test
-	void cannonExistenceSetAngleTest() {
-		classExist("Cannon");
-		Class<?> c = getClass("Cannon");
-		hasMethod(c, "setAngle");
+	void gameControllerLambdasTest() {
+		helper.classExist("GameController");
+		Class<?> c = helper.getClass("GameController");
+		long lamdaCount = helper.countMethodRegexp(c, "lambda\\$.*");
+		long innerClasscount = helper.countClassesRegexp(".*GameController\\$.*");
+		assertTrue(lamdaCount + innerClasscount >= 2,
+				"At least 2 inner classes or lamdas required for GameController but only "
+						+ (lamdaCount + innerClasscount) + " found.");
 	}
 
-
-	private void isInterface(Class<?> c) {
-		assertTrue(c.isInterface(), c.getName() + " have to be interface.");
+	@Test
+	void hitListenerExistenceTest() {
+		helper.classExist("HitListener");
 	}
 
-	private void classExist(String name) {
-		assertTrue(allClasses.stream().anyMatch(c -> c.endsWith(name)), "Interface " + name + " not found");
+	@Test
+	void hitListenerEventMethodTest() {
+		helper.classExist("HitListener");
+		Class<?> c = helper.getClass("HitListener");
+		helper.hasMethod(c, "ufoDestroyed");
 	}
 
-	private Class<?> getClass(String name) {
-		String className = allClasses.stream().filter(c -> c.endsWith(name)).findAny().orElse(null);
-		if (className == null) {
-			Assertions.fail("Class " + name + " not found.");
-		}
-		try {
-			return Class.forName(className);
-		} catch (ClassNotFoundException e) {
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			try (PrintStream ps = new PrintStream(baos, true)) {
-				e.printStackTrace(ps);
-			} catch (Exception e2) {
-				Assertions.fail(e2.getMessage());
-			}
-			String stackTrace = baos.toString();
-			Assertions.fail("Class " + name + " not found.\n" + stackTrace);
-			return null;
-		}
+	@Test
+	void sceneCollectionTest() {
+		helper.classExist("World");
+		Class<?> c = helper.getClass("World");
+		long collectionCount = Arrays.asList(c.getDeclaredFields()).stream()
+				.filter(f -> Collection.class.isAssignableFrom(f.getType())).count();
+		assertTrue(collectionCount >= 3, "lab.Scene require atleast 3 filed of type/subtype Collection, but only "
+				+ collectionCount + " found.");
 	}
 
-	private void hasProperty(Class<?> classDef, String propertyNameRegexp, Class<?> type, boolean array) {
-		List<Field> fields = Arrays.asList(classDef.getDeclaredFields());
-		assertTrue(fields.stream().anyMatch(f -> {
-			if (f.getName().matches(propertyNameRegexp)) {
-				if (array) {
-					return f.getType().isArray() && f.getType().getComponentType().equals(type);
-				} else {
-					return f.getType().equals(type);
-				}
-			}
-			return false;
-		}), "No field " + propertyNameRegexp + " of type " + type.getName() + " (is array " + array + ") in class "
-				+ classDef.getName());
+	@Test
+	void worldMethodAddTest() {
+		helper.classExist("World");
+		Class<?> c = helper.getClass("World");
+		helper.hasMethod(c, "add", void.class, helper.getClass("DrawableSimulable"));
+		;
 	}
 
-	private void hasPropertyWithAnnotation(Class<?> classDef, String propertyNameRegexp, Class<?> annotation) {
-		List<Field> fields = Arrays.asList(classDef.getDeclaredFields());
-		assertTrue(
-				fields.stream().filter(f -> f.getName().matches(propertyNameRegexp))
-						.flatMap(f -> Arrays.asList(
-								f.getAnnotations()).stream()).map(a -> a.annotationType()).anyMatch(a -> 
-								a.equals(annotation)),
-				"No field " + propertyNameRegexp + " with annotation " + annotation.getName() + " in class "
-						+ classDef.getName());
+	@Test
+	void worldMethodRemoveTest() {
+		helper.classExist("World");
+		Class<?> c = helper.getClass("World");
+		helper.hasMethod(c, "remove", void.class, helper.getClass("DrawableSimulable"));
+		;
 	}
 
-	private void hasMethod(Class<?> interfaceDef, String methodName, Class<?> returnType) {
-		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
-		assertTrue(
-				methods.stream().filter(m -> m.getName().contains(methodName))
-						.anyMatch(m -> m.getReturnType().equals(returnType)),
-				"Method " + methodName + " not return " + returnType.getName());
+	@Test
+	void bulletAnimatedMethodAddTest() {
+		helper.classExist("BulletAnimated");
+		Class<?> c = helper.getClass("BulletAnimated");
+		Class<?> l = helper.getClass("HitListener");
+		helper.hasMethodRegexp(c, "add.*", List.of(void.class, boolean.class), l);
 	}
 
-	private void hasMethod(Class<?> interfaceDef, String methodName, Class<?> returnType, Class<?>... params) {
-		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
-		assertTrue(
-				methods.stream().filter(m -> m.getName().contains(methodName))
-						.filter(m -> m.getReturnType().equals(returnType))
-						.anyMatch(m -> Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))),
-				"Method " + methodName + " has no all parrams:"
-						+ Arrays.asList(params).stream().map(Class::getName).collect(Collectors.joining(", ")));
+	@Test
+	void bulletAnimatedMethodRemoveTest() {
+		helper.classExist("Ufo");
+		Class<?> c = helper.getClass("BulletAnimated");
+		Class<?> l = helper.getClass("HitListener");
+		helper.hasMethodRegexp(c, "remove.*", List.of(void.class, boolean.class), l);
 	}
 
-	private void hasMethodRegexp(Class<?> interfaceDef, String methodNameRegexp, Class<?> returnType, Class<?>... params) {
-		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().matches(methodNameRegexp)), "No method " + methodNameRegexp);
-		assertTrue(
-				methods.stream().filter(m -> m.getName().matches(methodNameRegexp))
-						.filter(m -> m.getReturnType().equals(returnType))
-						.anyMatch(m -> 
-						Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))),
-				"Method " + methodNameRegexp + " has no all parrams:"
-						+ Arrays.asList(params).stream().map(Class::getName).collect(Collectors.joining(", ")));
-	}
-	private void hasMethod(Class<?> interfaceDef, boolean finalTag, boolean abstractTag, String methodName,
-			Class<?> returnType, Class<?>... params) {
-		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
-		assertTrue(
-				methods.stream().filter(m -> m.getName().contains(methodName))
-						.filter(m -> m.getReturnType().equals(returnType)
-								&& (Modifier.isAbstract(m.getModifiers()) == abstractTag)
-								&& (Modifier.isFinal(m.getModifiers()) == finalTag))
-						.anyMatch(m -> Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))),
-				"Method " + methodName + " has no all params:"
-						+ Arrays.asList(params).stream().map(Class::getName).collect(Collectors.joining(", ")));
+	@Test
+	void bulletAnimatedMethodFireTest() {
+		helper.classExist("BulletAnimated");
+		Class<?> c = helper.getClass("BulletAnimated");
+		assertTrue(helper.countMethodRegexp(c, "fire.*") > 0, "Method fire.* in LochNess not found.");
 	}
 
-	private void hasImplements(Class<?> clazz, String... interfaceNames) {
-		List<Class<?>> interfaces = new ArrayList<>();
-		Arrays.asList(interfaceNames).stream().map(name -> getClass(name)).forEach(c -> interfaces.add(c));
-		assertTrue(Arrays.asList(clazz.getInterfaces()).containsAll(interfaces), "Class not implements all interfaces:"
-				+ interfaces.stream().map(Class::getName).collect(Collectors.joining(", ")));
-	}
-
-	private void hasExtends(Class<?> clazz, String parentName) {
-		Class<?> parent = getClass(parentName);
-		assertTrue(clazz.getSuperclass().equals(parent),
-				"Class " + clazz.getName() + " not extends class " + parentName);
-	}
-
-	private void hasMethod(Class<?> interfaceDef, String methodName) {
-		List<Method> methods = Arrays.asList(interfaceDef.getMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
-	}
-
-	private Set<String> getNameOfAllClasses() {
-		List<String> initClassesName = Arrays.asList("lab.Routines", "lab.App", "lab.DrawingThread");
-		for (String className : initClassesName) {
-			try {
-				Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				System.out.println(String.format("Class '%s' cannot be loaded: %s", className, e.getMessage()));
-			}
-		}
-		Set<String> allClasses = new HashSet<>();
-		for (Package p : Package.getPackages()) {
-			if (p.getName().startsWith("java.") || p.getName().startsWith("com.") || p.getName().startsWith("jdk.")
-					|| p.getName().startsWith("javafx.") || p.getName().startsWith("org.")
-					|| p.getName().startsWith("sun.") || p.getName().startsWith("javax.")
-					|| p.getName().startsWith("javassist")) {
-				continue;
-			}
-			System.out.println(p.getName());
-			Configuration conf = new ConfigurationBuilder().addScanners(Scanners.SubTypes.filterResultsBy(pc -> true))
-					.forPackages(p.getName());
-			Reflections reflections = new Reflections(conf);
-			allClasses.addAll(reflections.getAll(Scanners.SubTypes.filterResultsBy(c -> {
-				System.out.println(c);
-				return true;
-			})));
-		}
-		return allClasses;
-	}
 }

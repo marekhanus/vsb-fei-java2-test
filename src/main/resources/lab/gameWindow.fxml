@@ -4,6 +4,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -33,10 +34,13 @@
       </HBox>
    </bottom>
    <center>
-      <Canvas fx:id="canvas" height="287.0" width="582.0" BorderPane.alignment="CENTER">
+      <Canvas fx:id="canvas" height="306.0" width="582.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
       </Canvas>
    </center>
+   <top>
+      <Label fx:id="hits" text="Hit count:  0" textAlignment="CENTER" BorderPane.alignment="CENTER" />
+   </top>
 </BorderPane>

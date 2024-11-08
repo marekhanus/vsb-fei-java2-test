@@ -1,5 +1,8 @@
 package lab;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,6 +14,8 @@ public class BulletAnimated extends Bullet {
 	private final Point2D initVelocity;
 	private Cannon cannon;
 	private Image image = new Image(this.getClass().getResourceAsStream("fireball-transparent.gif"));
+	private List<HitListener> hitListeners = 
+			new ArrayList<>();
 
 	public BulletAnimated(World world, Cannon cannon, Point2D position, Point2D velocity, Point2D acceleration) {
 		super(world, position, velocity, acceleration);
@@ -27,13 +32,28 @@ public class BulletAnimated extends Bullet {
 	@Override
 	public void hitBy(Collisionable another) {
 		if (another instanceof Ufo) {
-			reload();
+			world.remove(this);
+			fireUfoDestroyed();
 		}
 	}
 
 	public void reload() {
 		position = cannon.getPosition();
 		velocity = new Point2D(0, 0);
+	}
+
+	public boolean addHitListener(HitListener e) {
+		return hitListeners.add(e);
+	}
+
+	public boolean removeHitListener(HitListener o) {
+		return hitListeners.remove(o);
+	}
+	
+	private void fireUfoDestroyed() {
+		for (HitListener hitListener : hitListeners) {
+			hitListener.ufoDestroyed();
+		}
 	}
 	
 }
