@@ -95,7 +95,7 @@ class ClassStructureTest {
 	void worldMethodAddTest() {
 		helper.classExist("World");
 		Class<?> c = helper.getClass("World");
-		helper.hasMethod(c, "add", void.class, helper.getClass("DrawableSimulable"));
+		helper.hasMethodRegexp(c, "add.*", void.class, helper.getClass("DrawableSimulable"));
 		;
 	}
 
@@ -103,7 +103,7 @@ class ClassStructureTest {
 	void worldMethodRemoveTest() {
 		helper.classExist("World");
 		Class<?> c = helper.getClass("World");
-		helper.hasMethod(c, "remove", void.class, helper.getClass("DrawableSimulable"));
+		helper.hasMethodRegexp(c, "remove.*", void.class, helper.getClass("DrawableSimulable"));
 		;
 	}
 
