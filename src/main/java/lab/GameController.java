@@ -1,13 +1,29 @@
 package lab;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class GameController {
+
+    @FXML
+    private Button btnGenerateScore;
+
+    @FXML
+    private Button btnLoadAll;
+
+    @FXML
+    private Button btnLoadFirstTen;
 
 	@FXML
 	private Slider angle;
@@ -17,6 +33,15 @@ public class GameController {
 
 	@FXML
 	private Canvas canvas;
+
+	@FXML
+    private TableView<Score> scores;
+    @FXML
+    private TableColumn<Score, String> nickColumn;
+
+    @FXML
+    private TableColumn<Score, Integer> pointsColumn;
+
 
 	private DrawingThread timer;
 
@@ -42,6 +67,28 @@ public class GameController {
 				() -> System.out.println("au!!!!"));
 	}
 
+    @FXML
+    void btnGenerateScoreAction(ActionEvent event) {
+    	Score score = Score.generate();
+    	this.scores.getItems().add(score);
+    	DbConnector.insertScore(score);
+    }
+
+    @FXML
+    void btnLoadAllAction(ActionEvent event) {
+    	updateScoreTable(DbConnector.getAll());
+    }
+
+    @FXML
+    void btnLoadFirstTenAction(ActionEvent event) {
+    	updateScoreTable(DbConnector.getFirstTen());
+    }
+    
+    private void updateScoreTable(List<Score> scores) {
+    	this.scores.getItems().clear();
+    	this.scores.getItems().addAll(scores);
+    }
+
 	private void updateHits() {
 		hits.setText(String.format("Hit count: %03d", hitcount));
 	}
@@ -61,6 +108,20 @@ public class GameController {
 		angle.valueProperty().addListener(
 				(observable, oldValue, newValue) -> 
 					timer.getWorld().getCannon().setAngle(newValue.doubleValue()));
+		
+		nickColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+		pointsColumn.setCellValueFactory(new PropertyValueFactory<>("points"));
+		
+		initDB();
+
+	}
+	
+	private void initDB() {
+		scores.getItems().addAll(Stream.generate(Score::generate).limit(10).toList());
+		DbConnector.createTable();
+		DbConnector.getAll();
+		
+		
 	}
 
 	public void stop() {

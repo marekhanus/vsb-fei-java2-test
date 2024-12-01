@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 public class Ufo extends WorldEntity implements Collisionable {
 
 	private static final Random RANDOM = new Random();
-	private Image image = new Image(this.getClass().getResourceAsStream("ufo-small.gif"));
+	private Image image;
 	private Point2D velocity;
 
 	public Ufo(World world) {
@@ -23,9 +23,17 @@ public class Ufo extends WorldEntity implements Collisionable {
 		this.velocity = velocity;
 	}
 
+	private Image getImage() {
+		if (image == null) {
+			image = new Image(Ufo.class.getResourceAsStream("ufo-small.gif"));
+		}
+		return image;
+
+	}
+
 	@Override
 	public void drawInternal(GraphicsContext gc) {
-		gc.drawImage(image, getPosition().getX(), getPosition().getY());
+		gc.drawImage(getImage(), getPosition().getX(), getPosition().getY());
 	}
 
 	public void changeDirection() {
@@ -36,14 +44,14 @@ public class Ufo extends WorldEntity implements Collisionable {
 	public void simulate(double deltaT) {
 		position = position.add(velocity.multiply(deltaT));
 		position = new Point2D(position.getX() % world.getWidth(), position.getY());
-		if(position.getX() < -image.getWidth()) {
+		if (position.getX() < -getImage().getWidth()) {
 			position = new Point2D(world.getWidth(), position.getY());
 		}
 	}
 
 	@Override
 	public Rectangle2D getBoundingBox() {
-		return new Rectangle2D(position.getX(), position.getY(), image.getWidth(), image.getHeight());
+		return new Rectangle2D(position.getX(), position.getY(), getImage().getWidth(), getImage().getHeight());
 	}
 
 	@Override
@@ -53,7 +61,7 @@ public class Ufo extends WorldEntity implements Collisionable {
 
 	@Override
 	public void hitBy(Collisionable another) {
-		if(another instanceof BulletAnimated || another instanceof Bullet) {
+		if (another instanceof BulletAnimated || another instanceof Bullet) {
 			world.remove(this);
 		}
 	}
