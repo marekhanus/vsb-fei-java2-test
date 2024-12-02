@@ -1,7 +1,6 @@
 package lab;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,7 +35,8 @@ public class GameController {
 
 	@FXML
     private TableView<Score> scores;
-    @FXML
+
+	@FXML
     private TableColumn<Score, String> nickColumn;
 
     @FXML
@@ -113,15 +113,12 @@ public class GameController {
 		pointsColumn.setCellValueFactory(new PropertyValueFactory<>("points"));
 		
 		initDB();
-
 	}
 	
 	private void initDB() {
-		scores.getItems().addAll(Stream.generate(Score::generate).limit(10).toList());
+		//Stream.generate(Score::generate).limit(10).toList();
 		DbConnector.createTable();
-		DbConnector.getAll();
-		
-		
+		scores.getItems().addAll(DbConnector.getAll());
 	}
 
 	public void stop() {
