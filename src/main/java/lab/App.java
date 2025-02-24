@@ -29,7 +29,6 @@ public class App extends Application {
 			GameController gameController = gameLoader.getController();
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
-//			primaryStage.resizableProperty().set(false);
 			primaryStage.setTitle("Java 2 - 2nd laboratory");
 			primaryStage.show();
 			// Exit program when main window is closed

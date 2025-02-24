@@ -13,15 +13,15 @@ public class DbConnector {
 
 	private static final String JDBC_CONECTIN_STRING = "jdbc:h2:file:./scoreDB";
 
-	public static List<Score> getAll() {
+	public List<Score> getAll() {
 		return queryScore("select * from scores;");
 	}
 
-	public static List<Score> getFirstTen() {
+	public List<Score> getFirstTen() {
 		return queryScore("select * from scores order by points  desc limit 10;");
 	}
 
-	private static List<Score> queryScore(String query) {
+	private List<Score> queryScore(String query) {
 		List<Score> result = new ArrayList<>();
 		try (Connection con = DriverManager.getConnection(JDBC_CONECTIN_STRING);
 				Statement stm = con.createStatement();
@@ -35,7 +35,7 @@ public class DbConnector {
 		return result;
 	}
 
-	public static void createTable() {
+	public void init() {
 		try (Connection con = DriverManager.getConnection(JDBC_CONECTIN_STRING);
 				Statement stm = con.createStatement();) {
 			stm.executeUpdate("CREATE TABLE if not exists scores (nick VARCHAR(50) NOT NULL, points INT NOT NULL);");
@@ -44,7 +44,7 @@ public class DbConnector {
 		}
 	}
 
-	public static void insertScore(Score score) {
+	public void insertScore(Score score) {
 		try (Connection con = DriverManager.getConnection(JDBC_CONECTIN_STRING);
 				PreparedStatement stm = con.prepareStatement("INSERT INTO scores VALUES (?, ?)");) {
 			stm.setString(1, score.getName());

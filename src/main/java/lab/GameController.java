@@ -71,17 +71,17 @@ public class GameController {
     void btnGenerateScoreAction(ActionEvent event) {
     	Score score = Score.generate();
     	this.scores.getItems().add(score);
-    	DbConnector.insertScore(score);
+    	ScoreStorageFactory.getInstance().insertScore(score);
     }
 
     @FXML
     void btnLoadAllAction(ActionEvent event) {
-    	updateScoreTable(DbConnector.getAll());
+    	updateScoreTable(ScoreStorageFactory.getInstance().getAll());
     }
 
     @FXML
     void btnLoadFirstTenAction(ActionEvent event) {
-    	updateScoreTable(DbConnector.getFirstTen());
+    	updateScoreTable(ScoreStorageFactory.getInstance().getFirstTen());
     }
     
     private void updateScoreTable(List<Score> scores) {
@@ -117,8 +117,8 @@ public class GameController {
 	
 	private void initDB() {
 		//Stream.generate(Score::generate).limit(10).toList();
-		DbConnector.createTable();
-		scores.getItems().addAll(DbConnector.getAll());
+		ScoreStorageFactory.getInstance().init();
+		scores.getItems().addAll(ScoreStorageFactory.getInstance().getAll());
 	}
 
 	public void stop() {
