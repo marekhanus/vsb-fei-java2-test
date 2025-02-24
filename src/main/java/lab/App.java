@@ -15,9 +15,6 @@ import javafx.stage.WindowEvent;
  */
 public class App extends Application {
 
-	static {
-		System.out.println("aaa");
-	}
 	private GameController gameController;
 	public static void main(String[] args) {
 		launch(args);
@@ -32,8 +29,8 @@ public class App extends Application {
 			GameController gameController = gameLoader.getController();
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
-			primaryStage.resizableProperty().set(false);
-			primaryStage.setTitle("Java 1 - 1th laboratory");
+//			primaryStage.resizableProperty().set(false);
+			primaryStage.setTitle("Java 2 - 2nd laboratory");
 			primaryStage.show();
 			// Exit program when main window is closed
 			primaryStage.setOnCloseRequest(this::exitProgram);

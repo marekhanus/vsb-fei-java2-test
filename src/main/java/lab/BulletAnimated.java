@@ -13,7 +13,7 @@ public class BulletAnimated extends Bullet {
 	private static final double SIZE = 40;
 	private final Point2D initVelocity;
 	private Cannon cannon;
-	private Image image = new Image(this.getClass().getResourceAsStream("fireball-transparent.gif"));
+	private static Image image = new Image(BulletAnimated.class.getResourceAsStream("fireball-transparent.gif"));
 	private List<HitListener> hitListeners = 
 			new ArrayList<>();
 

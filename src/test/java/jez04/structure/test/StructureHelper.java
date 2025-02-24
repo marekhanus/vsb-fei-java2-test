@@ -29,7 +29,10 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.jupiter.api.Assertions;
 import org.reflections.Configuration;
 import org.reflections.Reflections;
@@ -38,18 +41,49 @@ import org.reflections.util.ConfigurationBuilder;
 
 class StructureHelper {
 
+	private static StructureHelper singeltonInstance;
+
+	public static StructureHelper getInstance() {
+		if (singeltonInstance == null) {
+			singeltonInstance = new StructureHelper();
+		}
+		return singeltonInstance;
+	}
+
 	Set<String> allClasses = getNameOfAllClasses();
+
+	private StructureHelper() {
+		/* hide public one */
+	}
+
+	public Set<String> getAllClasses() {
+		return allClasses;
+	}
 
 	public void isInterface(Class<?> c) {
 		assertTrue(c.isInterface(), c.getName() + " have to be interface.");
 	}
 
 	public void classExist(String name) {
-		assertTrue(allClasses.stream().anyMatch(c -> c.endsWith(name)), "Class/Interface " + name + " not found");
+		classExist(name, true);
+	}
+
+	public void classExist(String name, boolean caseSensitive) {
+		assertTrue(
+				allClasses.stream()
+						.anyMatch(c -> caseSensitive ? c.endsWith(name) : c.toLowerCase().endsWith(name.toLowerCase())),
+				"Class/Interface " + name + " not found");
 	}
 
 	public void classExistRegexp(String name) {
-		assertTrue(allClasses.stream().anyMatch(c -> c.matches(name)), "Class/Interface " + name + " not found");
+		classExistRegexp(name, true);
+	}
+
+	public void classExistRegexp(String name, boolean caseSensitive) {
+		assertTrue(
+				allClasses.stream()
+						.anyMatch(c -> caseSensitive ? c.matches(name) : c.toLowerCase().matches(name.toLowerCase())),
+				"Class/Interface " + name + " not found");
 	}
 
 	public Class<?> getClassDirectly(String name) {
@@ -57,7 +91,13 @@ class StructureHelper {
 	}
 
 	public Class<?> getClassRegexp(String name) {
-		String className = allClasses.stream().filter(c -> c.matches(name)).findAny().orElse(null);
+		return getClassRegexp(name, true);
+	}
+
+	public Class<?> getClassRegexp(String name, boolean caseSensitive) {
+		String className = allClasses.stream()
+				.filter(c -> caseSensitive ? c.matches(name) : c.toLowerCase().matches(name.toLowerCase())).findAny()
+				.orElse(null);
 		if (className == null) {
 			Assertions.fail("Class " + name + " not found.");
 		}
@@ -65,7 +105,13 @@ class StructureHelper {
 	}
 
 	public Class<?> getClass(String name) {
-		String className = allClasses.stream().filter(c -> c.endsWith(name)).findAny().orElse(null);
+		return getClass(name, true);
+	}
+
+	public Class<?> getClass(String name, boolean caseSensitive) {
+		String className = allClasses.stream()
+				.filter(c -> caseSensitive ? c.endsWith(name) : c.toLowerCase().endsWith(name.toLowerCase())).findAny()
+				.orElse(null);
 		if (className == null) {
 			Assertions.fail("Class " + name + " not found.");
 		}
@@ -88,10 +134,27 @@ class StructureHelper {
 		}
 	}
 
+	public org.hamcrest.Matcher<Class<?>> hasProperty(String propertyNameRegexp, Class<?> type, boolean array) {
+		return new HasProperty(propertyNameRegexp, type, array);
+	}
+
 	public void hasProperty(Class<?> classDef, String propertyNameRegexp, Class<?> type, boolean array) {
+		hasProperty(classDef, propertyNameRegexp, type, array, true);
+	}
+
+	public void hasProperty(Class<?> classDef, String propertyNameRegexp, Class<?> type, boolean array,
+			boolean caseSensitive) {
+		assertTrue(hasPropertyB(classDef, propertyNameRegexp, type, array, caseSensitive),
+				"No field " + propertyNameRegexp + " of type " + type.getName() + " (is array " + array + ") in class "
+						+ classDef.getName());
+	}
+
+	public boolean hasPropertyB(Class<?> classDef, String propertyNameRegexp, Class<?> type, boolean array,
+			boolean caseSensitive) {
 		List<Field> fields = Arrays.asList(classDef.getDeclaredFields());
-		assertTrue(fields.stream().anyMatch(f -> {
-			if (f.getName().matches(propertyNameRegexp)) {
+		return fields.stream().anyMatch(f -> {
+			if (caseSensitive ? f.getName().matches(propertyNameRegexp)
+					: f.getName().toLowerCase().matches(propertyNameRegexp.toLowerCase())) {
 				if (array) {
 					return f.getType().isArray() && f.getType().getComponentType().equals(type);
 				} else {
@@ -99,14 +162,20 @@ class StructureHelper {
 				}
 			}
 			return false;
-		}), "No field " + propertyNameRegexp + " of type " + type.getName() + " (is array " + array + ") in class "
-				+ classDef.getName());
+		});
 	}
 
 	public void hasPropertyWithAnnotation(Class<?> classDef, String propertyNameRegexp, Class<?> annotation) {
+		hasPropertyWithAnnotation(classDef, propertyNameRegexp, annotation, true);
+	}
+
+	public void hasPropertyWithAnnotation(Class<?> classDef, String propertyNameRegexp, Class<?> annotation,
+			boolean caseSensitive) {
 		List<Field> fields = Arrays.asList(classDef.getDeclaredFields());
 		assertTrue(
-				fields.stream().filter(f -> f.getName().matches(propertyNameRegexp))
+				fields.stream()
+						.filter(f -> caseSensitive ? f.getName().matches(propertyNameRegexp)
+								: f.getName().toLowerCase().matches(propertyNameRegexp.toLowerCase()))
 						.flatMap(f -> Arrays.asList(f.getAnnotations()).stream()).map(a -> a.annotationType())
 						.anyMatch(a -> a.equals(annotation)),
 				"No field " + propertyNameRegexp + " with annotation " + annotation.getName() + " in class "
@@ -114,19 +183,36 @@ class StructureHelper {
 	}
 
 	public void hasMethod(Class<?> interfaceDef, String methodName, Class<?> returnType) {
+		hasMethod(interfaceDef, methodName, returnType, true);
+	}
+
+	public void hasMethod(Class<?> interfaceDef, String methodName, Class<?> returnType, boolean caseSensitive) {
 		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
 		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
 		assertTrue(
-				methods.stream().filter(m -> m.getName().contains(methodName))
+				methods.stream()
+						.filter(m -> caseSensitive ? m.getName().matches(methodName)
+								: m.getName().toLowerCase().matches(methodName.toLowerCase()))
 						.anyMatch(m -> m.getReturnType().equals(returnType)),
 				"Method " + methodName + " not return " + returnType.getName());
 	}
 
 	public void hasMethod(Class<?> interfaceDef, String methodName, Class<?> returnType, Class<?>... params) {
+		hasMethod(interfaceDef, methodName, true, returnType, params);
+	}
+
+	public void hasMethod(Class<?> interfaceDef, String methodName, boolean caseSensitive, Class<?> returnType,
+			Class<?>... params) {
 		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
 		assertTrue(
-				methods.stream().filter(m -> m.getName().contains(methodName))
+				methods.stream()
+						.anyMatch(m -> caseSensitive ? m.getName().matches(methodName)
+								: m.getName().toLowerCase().matches(methodName.toLowerCase())),
+				"No method " + methodName);
+		assertTrue(
+				methods.stream()
+						.filter(m -> caseSensitive ? m.getName().matches(methodName)
+								: m.getName().toLowerCase().matches(methodName.toLowerCase()))
 						.filter(m -> m.getReturnType().equals(returnType))
 						.anyMatch(m -> Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))),
 				"Method " + methodName + " has no all parrams:"
@@ -134,8 +220,15 @@ class StructureHelper {
 	}
 
 	public Method getMethod(Class<?> interfaceDef, String methodName, Class<?> returnType, Class<?>... params) {
+		return getMethod(interfaceDef, methodName, true, returnType, params);
+	}
+
+	public Method getMethod(Class<?> interfaceDef, String methodName, boolean caseSensitive, Class<?> returnType,
+			Class<?>... params) {
 		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		List<Method> foundMethods = methods.stream().filter(m -> m.getName().contains(methodName))
+		List<Method> foundMethods = methods.stream()
+				.filter(m -> caseSensitive ? m.getName().matches(methodName)
+						: m.getName().toLowerCase().matches(methodName.toLowerCase()))
 				.filter(m -> m.getReturnType().equals(returnType))
 				.filter(m -> Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))).toList();
 		if (foundMethods.isEmpty()) {
@@ -148,8 +241,13 @@ class StructureHelper {
 	}
 
 	public long countMethodRegexp(Class<?> interfaceDef, String methodNameRegexp) {
+		return countMethodRegexp(interfaceDef, methodNameRegexp, true);
+	}
+
+	public long countMethodRegexp(Class<?> interfaceDef, String methodNameRegexp, boolean caseSensitive) {
 		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		return methods.stream().filter(m -> m.getName().matches(methodNameRegexp)).count();
+		return methods.stream().filter(m -> caseSensitive ? m.getName().matches(methodNameRegexp)
+				: m.getName().toLowerCase().matches(methodNameRegexp.toLowerCase())).count();
 	}
 
 	public long countMethodReference(Class<?> interfaceDef) throws URISyntaxException, IOException {
@@ -170,7 +268,12 @@ class StructureHelper {
 	}
 
 	public long countClassesRegexp(String classNameRegexp) {
-		return getNameOfAllClasses().stream().filter(className -> className.matches(classNameRegexp)).count();
+		return countClassesRegexp(classNameRegexp, true);
+	}
+
+	public long countClassesRegexp(String classNameRegexp, boolean caseSensitive) {
+		return getNameOfAllClasses().stream().filter(className -> caseSensitive ? className.matches(classNameRegexp)
+				: className.toLowerCase().matches(classNameRegexp.toLowerCase())).count();
 	}
 
 	public void hasConstructor(Class<?> classDef, Class<?>... params) {
@@ -195,39 +298,113 @@ class StructureHelper {
 
 	public void hasMethodRegexp(Class<?> interfaceDef, String methodNameRegexp, Class<?> returnType,
 			Class<?>... params) {
+		hasMethodRegexp(interfaceDef, methodNameRegexp, true, returnType, params);
+	}
+
+	public void hasMethodRegexp(Class<?> interfaceDef, String methodNameRegexp, boolean caseSensitive,
+			Class<?> returnType, Class<?>... params) {
 		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().matches(methodNameRegexp)),
+		assertTrue(
+				methods.stream()
+						.anyMatch(m -> caseSensitive ? m.getName().matches(methodNameRegexp)
+								: m.getName().toLowerCase().matches(methodNameRegexp.toLowerCase())),
 				"No method " + methodNameRegexp);
 		assertTrue(
-				methods.stream().filter(m -> m.getName().matches(methodNameRegexp))
+				methods.stream()
+						.filter(m -> caseSensitive ? m.getName().matches(methodNameRegexp)
+								: m.getName().toLowerCase().matches(methodNameRegexp.toLowerCase()))
 						.filter(m -> m.getReturnType().equals(returnType))
 						.anyMatch(m -> Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))),
 				"Method " + methodNameRegexp + " has no all parrams:"
 						+ Arrays.asList(params).stream().map(Class::getName).collect(Collectors.joining(", ")));
 	}
 
+	public boolean hasMethodRegexpTest(Class<?> interfaceDef, String methodNameRegexp, boolean caseSensitive,
+			Class<?> returnType, Class<?>... params) {
+		return hasMethodRegexpTest(interfaceDef, methodNameRegexp, caseSensitive, returnType, List.of(params));
+	}
+
+	public boolean hasMethodRegexpTest(Class<?> interfaceDef, String methodNameRegexp, boolean caseSensitive,
+			Class<?> returnType, List<Class<?>> params) {
+		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
+		if (!methods.stream().anyMatch(m -> caseSensitive ? m.getName().matches(methodNameRegexp)
+				: m.getName().toLowerCase().matches(methodNameRegexp.toLowerCase()))) {
+			return false;
+		}
+		return methods.stream()
+				.filter(m -> caseSensitive ? m.getName().matches(methodNameRegexp)
+						: m.getName().toLowerCase().matches(methodNameRegexp.toLowerCase()))
+				.filter(m -> m.getReturnType().equals(returnType))
+				.anyMatch(m -> Arrays.asList(m.getParameterTypes()).containsAll(params));
+	}
+
 	public long countMethodRegexp(Class<?> interfaceDef, String methodNameRegexp, Class<?> returnType,
 			Class<?>... params) {
+		return countMethodRegexp(interfaceDef, methodNameRegexp, true, returnType, params);
+	}
+
+	public long countMethodRegexp(Class<?> interfaceDef, String methodNameRegexp, boolean caseSensitive,
+			Class<?> returnType, Class<?>... params) {
 		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().matches(methodNameRegexp)),
+		assertTrue(
+				methods.stream()
+						.anyMatch(m -> caseSensitive ? m.getName().matches(methodNameRegexp)
+								: m.getName().toLowerCase().matches(methodNameRegexp.toLowerCase())),
 				"No method " + methodNameRegexp);
-		return methods.stream().filter(m -> m.getName().matches(methodNameRegexp))
+		return methods.stream()
+				.filter(m -> caseSensitive ? m.getName().matches(methodNameRegexp)
+						: m.getName().toLowerCase().matches(methodNameRegexp.toLowerCase()))
 				.filter(m -> m.getReturnType().equals(returnType))
 				.filter(m -> Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))).count();
 	}
 
+	public boolean hasMethodTest(Class<?> interfaceDef, boolean finalTag, boolean abstractTag, String methodName,
+			boolean caseSensitive, Class<?> returnType, Class<?>... params) {
+		return hasMethodTest(interfaceDef, finalTag, abstractTag, methodName, caseSensitive, returnType, List.of(params));
+	}
+	public boolean hasMethodTest(Class<?> interfaceDef, boolean finalTag, boolean abstractTag, String methodName,
+			boolean caseSensitive, Class<?> returnType, List<Class<?>> params) {
+		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
+		if (!methods.stream().anyMatch(m -> caseSensitive ? m.getName().matches(methodName)
+				: m.getName().toLowerCase().matches(methodName.toLowerCase()))) {
+			return false;
+		}
+		return methods.stream()
+				.filter(m -> caseSensitive ? m.getName().matches(methodName)
+						: m.getName().toLowerCase().matches(methodName.toLowerCase()))
+				.filter(m -> m.getReturnType().equals(returnType)
+						&& (Modifier.isAbstract(m.getModifiers()) == abstractTag)
+						&& (Modifier.isFinal(m.getModifiers()) == finalTag))
+				.anyMatch(m -> Arrays.asList(m.getParameterTypes()).containsAll(params));
+	}
+
 	public void hasMethod(Class<?> interfaceDef, boolean finalTag, boolean abstractTag, String methodName,
 			Class<?> returnType, Class<?>... params) {
+		hasMethod(interfaceDef, finalTag, abstractTag, methodName, true, returnType, params);
+	}
+
+	public void hasMethod(Class<?> interfaceDef, boolean finalTag, boolean abstractTag, String methodName,
+			boolean caseSensitive, Class<?> returnType, Class<?>... params) {
 		List<Method> methods = Arrays.asList(interfaceDef.getDeclaredMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
 		assertTrue(
-				methods.stream().filter(m -> m.getName().contains(methodName))
+				methods.stream()
+						.anyMatch(m -> caseSensitive ? m.getName().matches(methodName)
+								: m.getName().toLowerCase().matches(methodName.toLowerCase())),
+				"No method " + methodName);
+		assertTrue(
+				methods.stream()
+						.filter(m -> caseSensitive ? m.getName().matches(methodName)
+								: m.getName().toLowerCase().matches(methodName.toLowerCase()))
 						.filter(m -> m.getReturnType().equals(returnType)
 								&& (Modifier.isAbstract(m.getModifiers()) == abstractTag)
 								&& (Modifier.isFinal(m.getModifiers()) == finalTag))
 						.anyMatch(m -> Arrays.asList(m.getParameterTypes()).containsAll(Arrays.asList(params))),
 				"Method " + methodName + " has no all params:"
 						+ Arrays.asList(params).stream().map(Class::getName).collect(Collectors.joining(", ")));
+	}
+
+	public boolean isDescendatOf(Class<?> clazz, String interfaceName) {
+		return getClass(interfaceName).isAssignableFrom(clazz);
 	}
 
 	public void hasImplements(Class<?> clazz, String... interfaceNames) {
@@ -249,8 +426,16 @@ class StructureHelper {
 	}
 
 	public void hasMethod(Class<?> interfaceDef, String methodName) {
+		hasMethod(interfaceDef, methodName, true);
+	}
+
+	public void hasMethod(Class<?> interfaceDef, String methodName, boolean caseSensitive) {
 		List<Method> methods = Arrays.asList(interfaceDef.getMethods());
-		assertTrue(methods.stream().anyMatch(m -> m.getName().contains(methodName)), "No method " + methodName);
+		assertTrue(
+				methods.stream()
+						.anyMatch(m -> caseSensitive ? m.getName().matches(methodName)
+								: m.getName().toLowerCase().matches(methodName.toLowerCase())),
+				"No method " + methodName);
 	}
 
 	public String getSourceCode(Class<?> clazz) throws URISyntaxException, IOException {

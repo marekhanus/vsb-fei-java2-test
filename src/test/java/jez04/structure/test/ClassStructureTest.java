@@ -1,101 +1,132 @@
 package jez04.structure.test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-
 class ClassStructureTest {
 
-	StructureHelper helper = new StructureHelper();
+	StructureHelper helper = StructureHelper.getInstance();
 
 	@Test
-	void gameControllerExistenceTest() {
-		helper.classExist("GameController");
-	}
-
-	@Test
-	void gameControllerFxmlTest() {
-		helper.classExist("GameController");
-		Class<?> c = helper.getClass("GameController");
-		helper.hasPropertyWithAnnotation(c, ".*", FXML.class);
+	void dataImporterTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist(".*Data.*", false, true));
+		Class<?> c = helper.getClassRegexp(".*Data.*");
 	}
 
 	@Test
-	void gameControllerButtonActionMethodTest() {
-		helper.classExist("GameController");
-		Class<?> c = helper.getClass("GameController");
-		long count = helper.countMethodRegexp(c, ".*", void.class, ActionEvent.class);
-		assertTrue(count > 1, "Only " + count+ " method handling button click found. Expected more then 1");
+	void dataImporterDownloadTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist(".*Data.*", false, true));
+		Class<?> d = helper.getClassRegexp(".*Data.*");
+		assertThat(d,  new HasMethod(".*down.*", String.class).useRegExp(true).caseSensitive(false));
+		Method download = helper.getMethod(d, ".*down.*", false, String.class);
+		String downloadedText = (String) download.invoke(null);
+		assertThat(downloadedText, allOf(
+				endsWith("}]}"),
+				startsWith("{\"status\":\"OK\""),
+				stringContainsInOrder("firstname"),
+				stringContainsInOrder("lastname"),
+				stringContainsInOrder("birthday")
+				));
+		
 	}
 
 	@Test
-	void gameControllerTableViewTest() {
-		helper.classExist("GameController");
-		Class<?> c = helper.getClass("GameController");
-		helper.hasProperty(c, ".*", TableView.class, false);
-	}
-	
-	@Test
-	void gameControllerTableColumnTest() {
-		helper.classExist("GameController");
-		Class<?> c = helper.getClass("GameController");
-		helper.hasProperty(c, ".*", TableColumn.class, false);
+	void dataImporterParseAllTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist(".*Data.*", false, true));
+		Class<?> d = helper.getClassRegexp(".*Data.*");
+		helper.hasMethod(d, ".*parse.*", false, List.class, String.class);
+		Method parse = helper.getMethod(d, ".*parse.*", false, List.class, String.class);
+		List<String> texts = (List<String>) parse.invoke(null, "{\"id\":1,\"firstname\":\"Tatum\",\"lastname\":\"Block\",\"email\":\"lonnie.bergstrom@stoltenberg.com\",\"phone\":\"+12397191764\",\"birthday\":\"1946-11-06\",\"gender\":\"male\",\"address\":{");
+		assertThat(texts, not(empty()));
 	}
 
 	@Test
-	void dbConnectorTest() {
-		helper.classExistRegexp(".*[Dd][Bb][cC]on.*");
+	void personTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist("Person", false, false));
+		Class<?> p = helper.getClass("Person", false);
 	}
 
 	@Test
-	void dbConnectorGetAllTest() {
-		helper.classExistRegexp(".*[Dd][Bb][cC]on.*");
-		Class<?> scoreClass = helper.getClassRegexp(".*[sS]core.*");
-		Class<?> c = helper.getClassRegexp(".*[Dd][Bb][cC]on.*");
-		helper.hasMethodRegexp(c, ".*[aA]ll.*", List.class);
-		helper.hasMethodRegexp(c, ".*[iI]nsert.*", void.class, scoreClass);
-	}
-	@Test
-	void dbConnectorInsertTest() {
-		helper.classExistRegexp(".*[Dd][Bb][cC]on.*");
-		Class<?> scoreClass = helper.getClassRegexp(".*[sS]core.*");
-		Class<?> c = helper.getClassRegexp(".*[Dd][Bb][cC]on.*");
-		helper.hasMethodRegexp(c, ".*[iI]nsert.*", void.class, scoreClass);
-	}
-	@Test
-	void dbConnectorContainsJdbcTest() throws URISyntaxException, IOException {
-		helper.classExistRegexp(".*[Dd][Bb][cC]on.*");
-		Class<?> c = helper.getClassRegexp(".*[Dd][Bb][cC]on.*");
-		String src = helper.getSourceCode(c);
-		assertTrue(src.contains("jdbc:"), "No usage of jdbc detect.");
+	void dataImporterParsePersonTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist(".*Data.*", false, true));
+		Class<?> d = helper.getClassRegexp(".*Data.*");
+
+		assertThat("", new ClassExist("Person", false, false));
+		Class<?> p = helper.getClass("Person", false);
+		helper.hasMethod(d, ".*parse.*", false, p, String.class);
+		Method parsePerson = helper.getMethod(d, ".*parse.*", false, p, String.class);
+		Object person = parsePerson.invoke(null, "{\"id\":1,\"firstname\":\"Tatum\",\"lastname\":\"Block\",\"email\":\"lonnie.bergstrom@stoltenberg.com\",\"phone\":\"+12397191764\",\"birthday\":\"1946-11-06\",\"gender\":\"male\",\"address\":{");
+		assertThat(person, notNullValue());
 	}
 
 	@Test
-	void dbConnectorContainsDriverManagerTest() throws URISyntaxException, IOException {
-		helper.classExistRegexp(".*[Dd][Bb][cC]on.*");
-		Class<?> c = helper.getClassRegexp(".*[Dd][Bb][cC]on.*");
-		String src = helper.getSourceCode(c);
-		assertTrue(src.contains("DriverManager"), "No usage of DriverManager detect.");
+	void personAgeTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist(".*Data.*", false, true));
+		Class<?> d = helper.getClassRegexp(".*Data.*");
+
+		assertThat("", new ClassExist("Person", false, false));
+		Class<?> p = helper.getClass("Person", false);
+		helper.hasMethod(d, ".*parse.*", false, p, String.class);
+		Method parsePerson = helper.getMethod(d, ".*parse.*", false, p, String.class);
+		Object person = parsePerson.invoke(null, "{\"id\":1,\"firstname\":\"Tatum\",\"lastname\":\"Block\",\"email\":\"lonnie.bergstrom@stoltenberg.com\",\"phone\":\"+12397191764\",\"birthday\":\"1946-11-06\",\"gender\":\"male\",\"address\":{");
+		assertThat(person, notNullValue());
+
+		Method age = helper.getMethod(p, ".*age.*", false, int.class);
+		int result = (int)age.invoke(person);
+		assertEquals(78, result , "Calculate wrong age.");
 	}
 
 	@Test
-	void dbConnectorContainsSqlTest() throws URISyntaxException, IOException {
-		helper.classExistRegexp(".*[Dd][Bb][cC]on.*");
-		Class<?> c = helper.getClassRegexp(".*[Dd][Bb][cC]on.*");
-		String src = helper.getSourceCode(c).toLowerCase();
-		assertTrue(src.contains("create "), "No usage of SQL create.");
-		assertTrue(src.contains("select "), "No usage of SQL select.");
-		assertTrue(src.contains("insert "), "No usage of SQL table.");
-		assertTrue(src.contains(" from "), "No usage of SQL from.");
-		assertTrue(src.contains(" table"), "No usage of SQL table.");
+	void person50birthdayTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist(".*Data.*", false, true));
+		Class<?> d = helper.getClassRegexp(".*Data.*");
+
+		assertThat("", new ClassExist("Person", false, false));
+		Class<?> p = helper.getClass("Person", false);
+		helper.hasMethod(d, ".*parse.*", false, p, String.class);
+		Method parsePerson = helper.getMethod(d, ".*parse.*", false, p, String.class);
+		Object person = parsePerson.invoke(null, "{\"id\":1,\"firstname\":\"Tatum\",\"lastname\":\"Block\",\"email\":\"lonnie.bergstrom@stoltenberg.com\",\"phone\":\"+12397191764\",\"birthday\":\"1946-11-06\",\"gender\":\"male\",\"address\":{");
+		assertThat(person, notNullValue());
+		
+		Method birth50 = helper.getMethod(p, ".*50.*", false, LocalDate.class);
+		LocalDate ldBirth50 = (LocalDate)birth50.invoke(person);
+		assertEquals(LocalDate.of(1996, 11, 06), ldBirth50 , "Calculate wrong 50th birthday.");
+		
 	}
+
+	@Test
+	void personNextBirthdayTest() throws URISyntaxException, IOException, IllegalAccessException, InvocationTargetException {
+		assertThat("", new ClassExist(".*Data.*", false, true));
+		Class<?> d = helper.getClassRegexp(".*Data.*");
+
+		assertThat("", new ClassExist("Person", false, false));
+		Class<?> p = helper.getClass("Person", false);
+		helper.hasMethod(d, ".*parse.*", false, p, String.class);
+		Method parsePerson = helper.getMethod(d, ".*parse.*", false, p, String.class);
+		LocalDate bod =LocalDate.now().plusDays(338).minusYears(10);
+		Object person = parsePerson.invoke(null, "{\"id\":1,\"firstname\":\"Tatum\",\"lastname\":\"Block\",\"email\":\"lonnie.bergstrom@stoltenberg.com\",\"phone\":\"+12397191764\",\"birthday\":\""+ bod.format(DateTimeFormatter.ISO_DATE) +"\",\"gender\":\"male\",\"address\":{");
+		assertThat(person, notNullValue());
+
+		Method daysM = helper.getMethod(p, ".*days.*", false, long.class);
+		long days= (long)daysM.invoke(person);
+		assertEquals(338, days , "Calculate wrong days to next birthday.");
+	}
+
 }

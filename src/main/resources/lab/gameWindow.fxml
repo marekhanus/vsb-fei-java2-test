@@ -4,18 +4,18 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="471.0" prefWidth="901.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.GameController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="421.0" prefWidth="849.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.GameController">
    <bottom>
-      <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <HBox alignment="TOP_CENTER" prefHeight="66.0" prefWidth="866.0" BorderPane.alignment="CENTER">
          <children>
             <Slider fx:id="angle" majorTickUnit="15.0" max="90.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minorTickCount="5" showTickLabels="true" showTickMarks="true" HBox.hgrow="ALWAYS" />
             <Button mnemonicParsing="false" onAction="#fire" style="-fx-background-color: RED;" text="Fire" textAlignment="CENTER">
@@ -36,18 +36,18 @@
          </children>
       </HBox>
    </bottom>
-   <center>
-      <Canvas fx:id="canvas" height="306.0" width="582.0" BorderPane.alignment="CENTER">
+   <left>
+      <StackPane style="-fx-border-image-width: 3px; -fx-border-style: SOLID;" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
-      </Canvas>
-   </center>
-   <top>
-      <Label fx:id="hits" text="Hit count:  0" textAlignment="CENTER" BorderPane.alignment="CENTER" />
-   </top>
-   <right>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" BorderPane.alignment="CENTER">
+         <children>
+            <Canvas fx:id="canvas" height="306.0" style="-fx-border-width: 3px; -fx-border-style: SOLID; -fx-border-color: RGB(100.0,0.0,0.0);" width="582.0" StackPane.alignment="TOP_LEFT" />
+         </children>
+      </StackPane>
+   </left>
+   <center>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <children>
             <TableView fx:id="scores" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
               <columns>
@@ -63,5 +63,5 @@
             <Button fx:id="btnLoadFirstTen" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnLoadFirstTenAction" text="Load First 10 from DB" />
          </children>
       </VBox>
-   </right>
+   </center>
 </BorderPane>
