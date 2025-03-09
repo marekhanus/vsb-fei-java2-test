@@ -2,6 +2,9 @@ package lab.gui;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -19,6 +22,8 @@ import lab.game.DrawingThread;
 import lab.game.World;
 
 public class GameController {
+
+	private static Logger log = LogManager.getLogger(GameController.class);
 
 	@FXML
 	private Button btnGenerateScore;
@@ -63,7 +68,7 @@ public class GameController {
 				timer.getWorld().getCannon().getPosition(), velocity, World.GRAVITY);
 		timer.getWorld().add(bulletAnimated);
 		bulletAnimated.addHitListener(this::increaseHits);
-		bulletAnimated.addHitListener(() -> System.out.println("au!!!!"));
+		bulletAnimated.addHitListener(() -> log.info("au!!!!"));
 	}
 
 	@FXML
@@ -113,6 +118,7 @@ public class GameController {
 		pointsColumn.setCellValueFactory(new PropertyValueFactory<>("points"));
 
 		initStorage();
+		log.info("Screeen initialized.");
 	}
 
 	private void initStorage() {

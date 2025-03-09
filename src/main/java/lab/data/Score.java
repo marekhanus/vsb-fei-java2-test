@@ -1,5 +1,6 @@
 package lab.data;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class Score {
@@ -28,6 +29,24 @@ public class Score {
 
 	public void setPoints(int points) {
 		this.points = points;
+	}
+
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, points);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Score other = (Score) obj;
+		return Objects.equals(name, other.name) && points == other.points;
 	}
 
 	@Override

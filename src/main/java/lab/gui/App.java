@@ -1,5 +1,8 @@
 package lab.gui;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,9 +19,12 @@ import lab.Setting;
  */
 public class App extends Application {
 
+	private static Logger log = LogManager.getLogger(App.class);
 	private GameController gameController;
+
 	public static void main(String[] args) {
-		Setting.configure(new Setting());
+		log.info("Application lauched");
+		Setting.configure(Setting.getInstanceForHardcoreGame());
 		launch(args);
 	}
 
@@ -36,7 +42,7 @@ public class App extends Application {
 			// Exit program when main window is closed
 			primaryStage.setOnCloseRequest(this::exitProgram);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error during game play.", e);
 		}
 	}
 
@@ -44,9 +50,11 @@ public class App extends Application {
 	public void stop() throws Exception {
 		gameController.stop();
 		super.stop();
+		log.info("Gamne stoped");
 	}
 
 	private void exitProgram(WindowEvent evt) {
+		log.info("Exiting game");
 		System.exit(0);
 	}
 }

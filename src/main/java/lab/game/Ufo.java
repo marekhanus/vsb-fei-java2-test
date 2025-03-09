@@ -2,6 +2,9 @@ package lab.game;
 
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,6 +12,8 @@ import javafx.scene.image.Image;
 import lab.Setting;
 
 public class Ufo extends WorldEntity implements Collisionable {
+
+	private static Logger log = LogManager.getLogger(Ufo.class);
 
 	private static final Random RANDOM = new Random();
 	private Image image;
@@ -42,6 +47,7 @@ public class Ufo extends WorldEntity implements Collisionable {
 
 	public void changeDirection() {
 		velocity = velocity.multiply(-1);
+		log.debug("Ufo chaned direction.");
 	}
 
 	@Override
@@ -51,6 +57,7 @@ public class Ufo extends WorldEntity implements Collisionable {
 		if (position.getX() < -getImage().getWidth()) {
 			position = new Point2D(world.getWidth(), position.getY());
 		}
+		log.trace("Ufo position: {}", position);
 	}
 
 	@Override
@@ -65,6 +72,7 @@ public class Ufo extends WorldEntity implements Collisionable {
 
 	@Override
 	public void hitBy(Collisionable another) {
+		log.trace("Ufo hitted by {}.", another);
 		if (another instanceof BulletAnimated || another instanceof Bullet) {
 			world.remove(this);
 		}
