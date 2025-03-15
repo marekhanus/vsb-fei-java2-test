@@ -14,8 +14,8 @@ public class BulletAnimated extends Bullet {
 	private final Point2D initVelocity;
 	private Cannon cannon;
 	private static Image image = new Image(BulletAnimated.class.getResourceAsStream("fireball-transparent.gif"));
-	private List<HitListener> hitListeners = 
-			new ArrayList<>();
+	
+	private List<HitListener> hitListeners = new ArrayList<>();
 
 	public BulletAnimated(World world, Cannon cannon, Point2D position, Point2D velocity, Point2D acceleration) {
 		super(world, position, velocity, acceleration);
@@ -49,11 +49,11 @@ public class BulletAnimated extends Bullet {
 	public boolean removeHitListener(HitListener o) {
 		return hitListeners.remove(o);
 	}
-	
+
 	private void fireUfoDestroyed() {
 		for (HitListener hitListener : hitListeners) {
 			hitListener.ufoDestroyed();
 		}
 	}
-	
+
 }

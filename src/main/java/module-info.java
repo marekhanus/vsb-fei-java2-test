@@ -4,6 +4,7 @@ module cz.vsb.fei.java2.lab03_module {
 	requires javafx.base;
 	requires java.sql;
 	requires org.apache.logging.log4j;
+	requires static lombok;
 
 	opens lab.gui to javafx.fxml;
 	opens lab.data to javafx.base;

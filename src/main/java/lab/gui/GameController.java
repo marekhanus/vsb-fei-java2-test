@@ -15,6 +15,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import lab.Setting;
 import lab.data.Score;
 import lab.game.BulletAnimated;
@@ -33,6 +35,9 @@ public class GameController {
 
 	@FXML
 	private Button btnLoadFirstTen;
+
+	@FXML
+	private Button btnDelete;
 
 	@FXML
 	private Slider angle;
@@ -88,6 +93,22 @@ public class GameController {
 		updateScoreTable(Setting.getInstance().getScoreStorageInterface().getFirstTen());
 	}
 
+	@FXML
+	void keyPressed(KeyEvent event) {
+		log.info(event.getCode());
+		event.consume();
+	}
+
+	@FXML
+    void canvasClicked(MouseEvent event) {
+		canvas.requestFocus();
+    }
+
+	@FXML
+	void keyReleased(KeyEvent event) {
+
+	}
+
 	private void updateScoreTable(List<Score> scores) {
 		this.scores.getItems().clear();
 		this.scores.getItems().addAll(scores);
@@ -119,6 +140,7 @@ public class GameController {
 
 		initStorage();
 		log.info("Screeen initialized.");
+		canvas.requestFocus();
 	}
 
 	private void initStorage() {
@@ -127,6 +149,7 @@ public class GameController {
 	}
 
 	public void stop() {
+		timer.getWorld().pringDestroylog();
 		timer.stop();
 	}
 

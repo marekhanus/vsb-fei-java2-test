@@ -1,5 +1,6 @@
 package lab.game;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,7 @@ public class Ufo extends WorldEntity implements Collisionable {
 	private static final Random RANDOM = new Random();
 	private Image image;
 	private Point2D velocity;
-
+	
 	public Ufo(World world) {
 		this(world,
 				new Point2D(RANDOM.nextDouble(world.getWidth()),
@@ -74,7 +75,11 @@ public class Ufo extends WorldEntity implements Collisionable {
 	public void hitBy(Collisionable another) {
 		log.trace("Ufo hitted by {}.", another);
 		if (another instanceof BulletAnimated || another instanceof Bullet) {
+			world.add(new UfoDestroyLog(LocalDateTime.now(), getPosition()));
 			world.remove(this);
 		}
 	}
+	
+	record UfoDestroyLog(LocalDateTime time, Point2D position) {}
+	
 }

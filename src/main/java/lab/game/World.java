@@ -8,7 +8,10 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import lab.Setting;
+import lab.game.Ufo.UfoDestroyLog;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class World {
 
 	public static final Point2D GRAVITY = new Point2D(0, Setting.getInstance().getGravity());
@@ -19,6 +22,7 @@ public class World {
 	private List<DrawableSimulable> entities;
 	private Collection<DrawableSimulable> entitiesToRemove = new LinkedList<>();
 	private Collection<DrawableSimulable> entitiesToAdd = new LinkedList<>();
+	private List<UfoDestroyLog> destroyLogs = new LinkedList<>();
 
 	private Cannon cannon;
 //	private BulletAnimated bulletAnimated;
@@ -34,6 +38,17 @@ public class World {
 				GRAVITY));
 		for (int i = 0; i < Setting.getInstance().getNumberOfUfos(); i++) {
 			entities.add(new Ufo(this));
+		}
+	}
+
+	
+	public void add(UfoDestroyLog ufoDestroyLog) {
+		destroyLogs.add(ufoDestroyLog);
+	}
+
+	public void pringDestroylog() {
+		for (UfoDestroyLog ufoDestroyLog : destroyLogs) {
+			log.info(ufoDestroyLog);
 		}
 	}
 

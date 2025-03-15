@@ -1,5 +1,6 @@
 package lab.storage;
 
+import java.util.Collection;
 import java.util.List;
 
 import lab.data.Score;

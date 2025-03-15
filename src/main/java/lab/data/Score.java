@@ -1,8 +1,18 @@
 package lab.data;
 
-import java.util.Objects;
 import java.util.Random;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Score {
 
 	private static final Random RANDOM = new Random();
@@ -10,49 +20,6 @@ public class Score {
 	private String name;
 	private int points;
 	
-	public Score(String name, int points) {
-		this.name = name;
-		this.points = points;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getPoints() {
-		return points;
-	}
-
-	public void setPoints(int points) {
-		this.points = points;
-	}
-
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, points);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Score other = (Score) obj;
-		return Objects.equals(name, other.name) && points == other.points;
-	}
-
-	@Override
-	public String toString() {
-		return "Score [name=" + name + ", points=" + points + "]";
-	}
 	
 	public static Score generate() {
 		return new Score(getRandomNick(), RANDOM.nextInt(50, 300));

@@ -48,7 +48,7 @@
             <Insets />
          </BorderPane.margin>
          <children>
-            <Canvas fx:id="canvas" height="306.0" style="-fx-border-width: 3px; -fx-border-style: SOLID; -fx-border-color: RGB(100.0,0.0,0.0);" width="582.0" StackPane.alignment="TOP_LEFT" />
+            <Canvas fx:id="canvas" focusTraversable="true" height="306.0" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" onMouseClicked="#canvasClicked" style="-fx-border-width: 3px; -fx-border-style: SOLID; -fx-border-color: RGB(100.0,0.0,0.0);" width="582.0" StackPane.alignment="TOP_LEFT" />
          </children>
       </StackPane>
    </left>
@@ -67,6 +67,7 @@
             <Button fx:id="btnGenerateScore" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnGenerateScoreAction" text="Generate new score" />
             <Button fx:id="btnLoadAll" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnLoadAllAction" text="Load all from DB" />
             <Button fx:id="btnLoadFirstTen" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnLoadFirstTenAction" text="Load First 10 from DB" />
+            <Button fx:id="btnDelete" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Delete score" />
          </children>
       </VBox>
    </center>

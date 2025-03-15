@@ -3,17 +3,42 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.vsb.fei.java2</groupId>
-	<artifactId>java2-lab03-v1</artifactId>
+	<artifactId>java2-lab04-v1</artifactId>
 	<version>0.0.1-SNAPHOST</version>
 
-	<name>java2-lab03-v1</name>
+	<name>java2-lab04-v1</name>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
+		<lombok.version>1.18.34</lombok.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>vsb-education-release</id>
+			<url>https://artifactory.cs.vsb.cz/repository/education-releases/</url>
+		</repository>
+		<repository>
+			<id>vsb-education-snapshot</id>
+			<url>https://artifactory.cs.vsb.cz/repository/education-snapshot/</url>
+		</repository>
+	</repositories>
 	<dependencies>
+		<dependency>
+			<groupId>cz.vsb.fei</groupId>
+			<artifactId>kelvin-java-unittest-support</artifactId>
+			<version>[0.1.4,)</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!--
 		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
@@ -72,18 +97,6 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.10.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest</artifactId>
-			<version>3.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -92,7 +105,13 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
 				<configuration>
-					<failOnError>false</failOnError>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>

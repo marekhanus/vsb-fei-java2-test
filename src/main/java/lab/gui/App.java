@@ -24,7 +24,7 @@ public class App extends Application {
 
 	public static void main(String[] args) {
 		log.info("Application lauched");
-		Setting.configure(Setting.getInstanceForHardcoreGame());
+		Setting.configure(Setting.getInstanceForHardcoreGame().toBuilder().ufoMinPercentageHeight(0.4).build());
 		launch(args);
 	}
 
@@ -34,7 +34,7 @@ public class App extends Application {
 			// Construct a main window with a canvas.
 			FXMLLoader gameLoader = new FXMLLoader(getClass().getResource("/lab/gui/gameWindow.fxml"));
 			Parent root = gameLoader.load();
-			GameController gameController = gameLoader.getController();
+			gameController = gameLoader.getController();
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Java 2 - 2nd laboratory");
@@ -54,6 +54,9 @@ public class App extends Application {
 	}
 
 	private void exitProgram(WindowEvent evt) {
+		if (gameController != null) {
+			gameController.stop();
+		}
 		log.info("Exiting game");
 		System.exit(0);
 	}
