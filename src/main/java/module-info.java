@@ -5,10 +5,12 @@ module cz.vsb.fei.java2.lab05_module {
 	requires java.sql;
 	requires org.apache.logging.log4j;
 	requires static lombok;
+	requires jakarta.persistence;
 	requires com.h2database;
+	requires org.hibernate.orm.core;
 	
 	opens lab.gui to javafx.fxml;
-	opens lab.data to javafx.base;
+	opens lab.data;
 
 	exports lab.gui to javafx.fxml, javafx.graphics;
 }
