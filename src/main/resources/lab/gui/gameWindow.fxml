@@ -59,6 +59,7 @@
               <columns>
                 <TableColumn fx:id="nickColumn" prefWidth="75.0" text="Nick" />
                 <TableColumn fx:id="pointsColumn" prefWidth="75.0" text="Points" />
+                  <TableColumn fx:id="levelColumn" prefWidth="75.0" text="Úroveň" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -67,7 +68,7 @@
             <Button fx:id="btnGenerateScore" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnGenerateScoreAction" text="Generate new score" />
             <Button fx:id="btnLoadAll" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnLoadAllAction" text="Load all from DB" />
             <Button fx:id="btnLoadFirstTen" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnLoadFirstTenAction" text="Load First 10 from DB" />
-            <Button fx:id="btnDelete" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Delete score" />
+            <Button fx:id="btnDelete" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#btnDeleteAction" text="Delete score" />
          </children>
       </VBox>
    </center>

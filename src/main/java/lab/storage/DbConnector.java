@@ -31,7 +31,7 @@ public class DbConnector implements ScoreStorageInterface {
 				Statement stm = con.createStatement();
 				ResultSet rs = stm.executeQuery(query);) {
 			while (rs.next()) {
-				result.add(new Score(rs.getString("nick"), rs.getInt("points")));
+				result.add(new Score(null, rs.getString("nick"), rs.getInt("points"), null));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class DbConnector implements ScoreStorageInterface {
 	}
 
 	@Override
-	public void insertScore(Score score) {
+	public Score save(Score score) {
 		try (Connection con = DriverManager.getConnection(JDBC_CONECTIN_STRING);
 				PreparedStatement stm = con.prepareStatement("INSERT INTO scores VALUES (?, ?)");) {
 			stm.setString(1, score.getName());
@@ -59,5 +59,26 @@ public class DbConnector implements ScoreStorageInterface {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return score;
 	}
+
+	@Override
+	public void delete(List<Score> scores) {
+		try (Connection con = DriverManager.getConnection(JDBC_CONECTIN_STRING);
+				PreparedStatement stm = con.prepareStatement("DELETE FROM scores WHERE nick=? AND points=?");) {
+			for (Score score : scores) {
+				stm.setString(1, score.getName());
+				stm.setInt(2, score.getPoints());
+				stm.executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void stop() {
+		/*nothing to do*/
+	}
+		
 }

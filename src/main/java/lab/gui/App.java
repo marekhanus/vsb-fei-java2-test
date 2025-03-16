@@ -1,7 +1,8 @@
 package lab.gui;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.sql.SQLException;
+
+import org.h2.tools.Server;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lab.Setting;
+import lab.storage.JpaConnector;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Class <b>App</b> - extends class Application and it is an entry point of the
@@ -17,15 +20,29 @@ import lab.Setting;
  * 
  * @author Java I
  */
+@Log4j2
 public class App extends Application {
 
-	private static Logger log = LogManager.getLogger(App.class);
 	private GameController gameController;
 
 	public static void main(String[] args) {
 		log.info("Application lauched");
-		Setting.configure(Setting.getInstanceForHardcoreGame().toBuilder().ufoMinPercentageHeight(0.4).build());
+		Setting.configure(Setting.builder().scoreStorageInterface(new JpaConnector()).build());
+
+		startH2WebServerToInspectDb();
+
 		launch(args);
+	}
+
+	private static void startH2WebServerToInspectDb() {
+		//Start HTTP server for access H2 DB for look inside 
+		try {
+		    Server server = Server.createWebServer();
+		    log.info(server.getURL());
+		    server.start();
+		} catch (SQLException e) {
+		    e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -57,6 +74,7 @@ public class App extends Application {
 		if (gameController != null) {
 			gameController.stop();
 		}
+		Setting.getInstance().getScoreStorageInterface().stop();
 		log.info("Exiting game");
 		System.exit(0);
 	}

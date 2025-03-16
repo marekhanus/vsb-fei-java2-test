@@ -1,6 +1,5 @@
 package lab.storage;
 
-import java.util.Collection;
 import java.util.List;
 
 import lab.data.Score;
@@ -13,6 +12,10 @@ public interface ScoreStorageInterface {
 
 	void init();
 
-	void insertScore(Score score);
+	Score save(Score score);
+	
+	void delete(List<Score> scores);
+	
+	void stop();
 
 }

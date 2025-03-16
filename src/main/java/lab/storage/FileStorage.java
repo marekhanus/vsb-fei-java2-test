@@ -21,7 +21,7 @@ public class FileStorage implements ScoreStorageInterface {
 		if (Files.exists(Paths.get(SCORE_FILE_NAME))) {
 			try (Stream<String> lines = Files.lines(Paths.get(SCORE_FILE_NAME))) {
 				List<Score> result = lines.map(line -> line.split(";"))
-						.map(parts -> new Score(parts[0], Integer.parseInt(parts[1]))).toList();
+						.map(parts -> new Score(null, parts[0], Integer.parseInt(parts[1]), null)).toList();
 				return new ArrayList<>(result);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -43,14 +43,33 @@ public class FileStorage implements ScoreStorageInterface {
 	}
 
 	@Override
-	public void insertScore(Score score) {
+	public Score save(Score score) {
 		List<Score> all = getAll();
 		all.add(score);
+		storeAll(all);
+		return score;
+	}
+
+	private void storeAll(List<Score> all) {
 		List<String> lines = all.stream().map(s -> String.format("%s;%d", s.getName(), s.getPoints())).toList();
 		try {
-			Files.write(Paths.get(SCORE_FILE_NAME), lines, StandardOpenOption.CREATE);
+			Files.write(Paths.get(SCORE_FILE_NAME), lines, StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void delete(List<Score> scores) {
+		List<Score> all = getAll();
+		all.removeAll(scores);
+		storeAll(all);
+		
+	}
+
+	@Override
+	public void stop() {
+		/*nothing to do*/
+	}
+
 }

@@ -1,16 +1,19 @@
 package lab.gui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import lab.Setting;
+import lab.data.Level;
 import lab.data.Score;
 import lab.game.BulletAnimated;
 import lab.game.DrawingThread;
@@ -57,6 +61,9 @@ public class GameController {
 	@FXML
 	private TableColumn<Score, Integer> pointsColumn;
 
+	@FXML
+	private TableColumn<Score, Level> levelColumn;
+
 	private DrawingThread timer;
 
 	@FXML
@@ -80,7 +87,7 @@ public class GameController {
 	void btnGenerateScoreAction(ActionEvent event) {
 		Score score = Score.generate();
 		this.scores.getItems().add(score);
-		Setting.getInstance().getScoreStorageInterface().insertScore(score);
+		Setting.getInstance().getScoreStorageInterface().save(score);
 	}
 
 	@FXML
@@ -94,15 +101,22 @@ public class GameController {
 	}
 
 	@FXML
+	void btnDeleteAction(ActionEvent event) {
+		List<Score> selectedScores = new ArrayList<>(scores.getSelectionModel().getSelectedItems());
+		Setting.getInstance().getScoreStorageInterface().delete(selectedScores);
+		updateScoreTable(Setting.getInstance().getScoreStorageInterface().getAll());
+	}
+
+	@FXML
 	void keyPressed(KeyEvent event) {
 		log.info(event.getCode());
 		event.consume();
 	}
 
 	@FXML
-    void canvasClicked(MouseEvent event) {
+	void canvasClicked(MouseEvent event) {
 		canvas.requestFocus();
-    }
+	}
 
 	@FXML
 	void keyReleased(KeyEvent event) {
@@ -137,6 +151,13 @@ public class GameController {
 
 		nickColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 		pointsColumn.setCellValueFactory(new PropertyValueFactory<>("points"));
+		levelColumn.setCellValueFactory(new PropertyValueFactory<>("level"));
+
+		btnDelete.setDisable(true);
+		scores.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		scores.getSelectionModel().getSelectedItems()
+				.addListener((ListChangeListener.Change<? extends Score> change) -> 
+					btnDelete.setDisable(change.getList().isEmpty()));
 
 		initStorage();
 		log.info("Screeen initialized.");

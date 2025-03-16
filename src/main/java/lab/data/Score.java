@@ -3,6 +3,7 @@ package lab.data;
 import java.util.Random;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,16 +14,19 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Builder(toBuilder = true)
 public class Score {
 
 	private static final Random RANDOM = new Random();
 	
+	private Long id;
 	private String name;
 	private int points;
+	private Level level;
 	
 	
 	public static Score generate() {
-		return new Score(getRandomNick(), RANDOM.nextInt(50, 300));
+		return new Score(null, getRandomNick(), RANDOM.nextInt(50, 300), Level.values()[RANDOM.nextInt(Level.values().length)]);
 	}
 	
 	public static final String[] nicks = { "CyberSurfer", "PixelPioneer", "SocialSavvy", "DigitalDynamo", "ByteBuddy", "InstaGuru",
