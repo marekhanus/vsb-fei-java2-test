@@ -5,8 +5,8 @@ module cz.vsb.fei.java2.lab06_module {
 	requires jakarta.persistence;
 	requires com.h2database;
 	requires org.hibernate.orm.core;
-	requires jakarta.annotation;
-	
+	requires static jakarta.annotation;
+
 	opens lab.data;
 
 }

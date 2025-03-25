@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.vsb.fei.java2</groupId>
-	<artifactId>java2-lab06-v1</artifactId>
+	<artifactId>java2-lab06-v2</artifactId>
 	<version>0.0.1-SNAPHOST</version>
 
-	<name>java2-lab06-v1</name>
+	<name>java2-lab06-v2</name>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

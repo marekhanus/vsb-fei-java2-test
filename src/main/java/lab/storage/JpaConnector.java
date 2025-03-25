@@ -20,17 +20,17 @@ public class JpaConnector {
 	}
 
 	public<T extends MyEntity> List<T> getAll(Class<T> clazz) {
+		//TODO
 		return null;
 	}
 
-	public void init() {
-	}
-
 	public<T extends MyEntity> T save(T score) {
+		//TODO
 		return null;
 	}
 
 	public void delete(List<? extends MyEntity> e) {
+		//TODO
 	}
 
 	public void stop() {
@@ -39,7 +39,6 @@ public class JpaConnector {
 	}
 
 	public EntityManager getEntityManager() {
-		//return entity manager. Type Object is there because of compilation of empty task assignment
 		return em;
 	}
 
@@ -56,6 +55,7 @@ public class JpaConnector {
 
 	
 	public List<Score> findBy(String partialName, Score.Difficult difficult){
+		//TODO
 		return null;
 	}
 	

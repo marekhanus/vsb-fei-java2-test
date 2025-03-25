@@ -12,9 +12,8 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder(toBuilder = true)
-public class Player  implements MyEntity{
+public class Player implements MyEntity {
 
-	
 	private Long id;
 	private String firstName;
 	private String lastName;

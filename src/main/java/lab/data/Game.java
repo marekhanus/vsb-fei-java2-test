@@ -12,7 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder(toBuilder = true)
-public class Game implements MyEntity{
+public class Game implements MyEntity {
 
 	private Long id;
 	private String name;
