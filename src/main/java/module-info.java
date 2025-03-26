@@ -6,7 +6,8 @@ module cz.vsb.fei.java2.lab06_module {
 	requires com.h2database;
 	requires org.hibernate.orm.core;
 	requires static jakarta.annotation;
+	requires org.apache.logging.log4j.core;
 
-	opens lab.data;
+	opens lab.jpa;
 
 }

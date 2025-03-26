@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.vsb.fei.java2</groupId>
-	<artifactId>java2-lab06-v2</artifactId>
+	<artifactId>java2-lab07-test-v3</artifactId>
 	<version>0.0.1-SNAPHOST</version>
 
-	<name>java2-lab06-v2</name>
+	<name>java2-lab07-test-v3</name>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -142,11 +142,6 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>3.6.0</version>
-				<configuration>
-					<sources>
-						<source>target/generated-sources/annotations</source>
-					</sources>
-				</configuration>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -154,6 +149,11 @@
 						<goals>
 							<goal>add-source</goal>
 						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/annotations</source>
+							</sources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -189,7 +189,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>libs/</classpathPrefix>
-							<mainClass>lab.gui.App</mainClass>
+							<mainClass>lab.App</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
