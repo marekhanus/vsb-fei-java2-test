@@ -15,6 +15,7 @@ public class NotEnoughSpaceException {
 	}
 
 	public Box getBox() {
+		// TODO: Replace with Lombok annotation.
 		return box;
 	}
 
