@@ -22,10 +22,10 @@ public class Shelf {
 	 * 
 	 * If the boxes do not fit on the shelf (the coordinate 
 	 * of the box plus its width is greater than the width
-	 * of the shelf) throw a NotEnoughtSpaceException
+	 * of the shelf) throw a NotEnoughSpaceException
 	 * 
 	 * @param boxes
-	 * @throws NotEnoughtSpaceException
+	 * @throws NotEnoughSpaceException
 	 */
 	public void insert(List<Box> boxes) {
 		//TODO:

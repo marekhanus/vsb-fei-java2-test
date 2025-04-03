@@ -35,7 +35,7 @@ class CleaningBot3Test {
 	void testInsertThrowsException() throws NoSuchMethodException {
 		Method insert = helper.getMethod(Shelf.class, "insert", void.class);
 		List<String> exceptionNames = List.of(insert.getExceptionTypes()).stream().map(Class::getSimpleName).toList();
-		assertThat(exceptionNames, Matchers.containsInRelativeOrder(NotEnoughtSpaceException.class.getSimpleName()));
+		assertThat(exceptionNames, Matchers.containsInRelativeOrder(NotEnoughSpaceException.class.getSimpleName()));
 	}
 
 	@Test
@@ -45,8 +45,8 @@ class CleaningBot3Test {
 			shelf.insert(List.of(new Box(0, 0, 10, 1)));
 			Assertions.fail("Method insert shout raise an exception");
 		} catch (Exception ex) {
-			assertEquals(NotEnoughtSpaceException.class, ex.getClass(),
-					"Method insert sdhould raise exception of type NotEnoughtSpaceException");
+			assertEquals(NotEnoughSpaceException.class, ex.getClass(),
+					"Method insert sdhould raise exception of type NotEnoughSpaceException");
 		}
 	}
 
