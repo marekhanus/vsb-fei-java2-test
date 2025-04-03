@@ -17,7 +17,7 @@ public class ArchitectManager {
 	public void run() {
 		JpaConnector connector = new JpaConnector();
 		countries(connector);
-		buildingsAndCityies(connector);
+		buildingsAndCities(connector);
 	}
 	
 	public void countries(JpaConnector connector) {
@@ -35,7 +35,7 @@ public class ArchitectManager {
 		return Stream.generate(Country::generate).limit(10).toList(); 
 	}
 
-	public void buildingsAndCityies(JpaConnector connector) {
+	public void buildingsAndCities(JpaConnector connector) {
 		for(City city : generateCities()) {
 			connector.save(city);
 		}
