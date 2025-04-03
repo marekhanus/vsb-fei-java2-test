@@ -32,7 +32,7 @@ public class DatabaseControl {
 	}
 
 	public static void waitForKeyPress() {
-		System.out.println("Waitnig for Key press (ENTER)");
+		System.out.println("Waiting for Key press (ENTER)");
 		try {
 			System.in.read();
 		} catch (IOException e) {

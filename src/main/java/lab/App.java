@@ -11,7 +11,7 @@ import lab.travel.TravelAgency;
 public class App {
 
 	public static void main(String[] args) {
-		System.out.println("Application lauched");
+		System.out.println("Application launched");
 
 		DatabaseControl.startDBWebServer();
 		
