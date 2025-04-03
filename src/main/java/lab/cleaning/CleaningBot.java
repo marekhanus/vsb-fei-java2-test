@@ -43,9 +43,9 @@ public class CleaningBot {
 	 * if it will actually print.  
 	 * 
 	 * @param shelf - shelf into which boxes are inserted
-	 * @param boxs - list of boxes
+	 * @param boxes - list of boxes
 	 */
-	public void clean(Shelf shelf, List<Box> boxs){
+	public void clean(Shelf shelf, List<Box> boxes){
 		//TODO:
 	}
 }

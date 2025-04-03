@@ -8,7 +8,7 @@ import lab.Tools;
  * Using the lombok library, extend the class with:
  * - getters and setters for all instance variables
  * - listing using the toString method, which work correctly with inheritance
- * - a the hashcode method, which works correctly with inheritance
+ * - the hashcode method, which works correctly with inheritance
  * - the equals method, which works correctly with inheritance
  */
 //TODO:
