@@ -14,7 +14,6 @@ public class NotEnoughSpaceException {
 	private final Box box;
 
 	public NotEnoughSpaceException(Box box) {
-		//TODO: call parent with message "Not enough space for all boxes."
 		this.box = box;
 	}
 
