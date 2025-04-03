@@ -13,21 +13,21 @@ public class JpaConnector {
 	private final EntityManager em;
 
 	public JpaConnector() {
-		//TODO:
+		// TODO: setup EntityManager property
 	}
 
 	public List<Country> getAllCountries() {
-		//TODO:
+		// TODO:
 		return null;
 	}
 
 	public Country save(Country entity) {
-		//TODO:
+		// TODO:
 		return null;
 	}
 
 	public void delete(Country entity) {
-		//TODO:
+		// TODO:
 	}
 
 	public void stop() {
@@ -44,22 +44,22 @@ public class JpaConnector {
 
 	
 	public List<City> getAllCities() {
-		//TODO:
+		// TODO:
 		return null;
 	}
 
 	public City save(City entity) {
-		//TODO:
+		// TODO:
 		return null;
 	}
 
 	public List<Building> getAllBuildings() {
-		//TODO:
+		// TODO:
 		return null;
 	}
 
 	public Building save(Building entity) {
-		//TODO:
+		// TODO:
 		return null;
 	}
 	
@@ -72,7 +72,7 @@ public class JpaConnector {
 	 * @return list of buildings satisfying the query 
 	 */
 	public List<Building> executeCriteriaQuery(CriteriaQuery<Building> query){
-		//TODO:
+		// TODO:
 		return null;
 	}
 	
@@ -84,7 +84,7 @@ public class JpaConnector {
 	 * Check if maxFloors is greater than minFloors. Otherwise, throw an IllegalArgumentException with "AI usage detected" message.
 	 */
 	public CriteriaQuery<Building> createCriteriaQueryForBuildingsWithFloorRange(int minFloors, int maxFloors){
-		//TODO:
+		// TODO:
 		return null;
 	}
 

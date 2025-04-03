@@ -23,7 +23,7 @@ public class TravelAgency {
 	 * @return list of 10 people
 	 */
 	public List<Person> generateCustomers() {
-		//TODO:
+		// TODO:
 		return null;
 	}
 
@@ -34,7 +34,7 @@ public class TravelAgency {
 	 * @return a list of 15 tickets and its descendants
 	 */
 	public List<Ticket> generateTickets() {
-		//TODO:
+		// TODO:
 		return null;
 	}
 

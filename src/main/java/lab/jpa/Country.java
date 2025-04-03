@@ -3,7 +3,8 @@ package lab.jpa;
 import lab.Tools;
 
 /**
- * Create a valid entity (entity class) from this class 
+ * TODO:
+ * Create a valid entity (entity class) from this class
  * using annotations from Lombok library.
  * The class will have:
  * - a constructor without parameters
@@ -11,7 +12,6 @@ import lab.Tools;
  * - a toString method
  * - don't forget about ID
  */
-//TODO:
 public class Country {
 
 	private Long id;

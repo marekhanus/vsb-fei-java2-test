@@ -28,7 +28,7 @@ public class CleaningBot {
 	 * Create a collection of 10 random boxes
 	 */
 	public List<Box> generateMess(){
-		//TODO:
+		// TODO:
 		return null;
 	}
 	
@@ -46,6 +46,6 @@ public class CleaningBot {
 	 * @param boxes - list of boxes
 	 */
 	public void clean(Shelf shelf, List<Box> boxes){
-		//TODO:
+		// TODO:
 	}
 }

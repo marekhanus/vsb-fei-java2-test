@@ -5,7 +5,8 @@ import java.util.List;
 import lab.Tools;
 
 /**
- * Create a valid entity (entity class) from this class 
+ * TODO:
+ * Create a valid entity (entity class) from this class
  * using annotations from Lombok library.
  * The class will have:
  * - a constructor without parameters
@@ -15,7 +16,6 @@ import lab.Tools;
  * - don't forget about ID
  * - don't forget about relation to buildings
  */
-//TODO:
 public class City {
 
 	private Long id;

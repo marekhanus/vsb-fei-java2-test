@@ -2,10 +2,7 @@ package lab.cleaning;
 
 import java.io.Serial;
 
-/**
- * Make the class a valid exception.
- */
-//TODO:
+// TODO: Make the class a valid exception.
 public class NotEnoughSpaceException {
 
 	@Serial

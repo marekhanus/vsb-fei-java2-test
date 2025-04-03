@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import lab.Tools;
 
 /**
+ * TODO:
  * Using the Lombok library, annotate the class with:
  * - getters and setters for all instance variables
  * - listing using the toString method
  * - the hashcode method
  * - the equals method
  */
-//TODO:
 public class Ticket {
 
 	private String name;

@@ -3,6 +3,7 @@ package lab.travel;
 import lab.Tools;
 
 /**
+ * TODO:
  * Using the Lombok library, annotate the class with:
  * - getters for all instance variables
  * - setter for password only
@@ -13,7 +14,6 @@ import lab.Tools;
  * - constructor without parameters
  * - possibility of using the builder design pattern
  */
-//TODO:
 public class Person {
 
 	private String email;
