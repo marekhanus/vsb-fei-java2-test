@@ -48,7 +48,7 @@ public class ArchitectManager {
 		
 		for(City city: connector.getAllCities()) {
 			System.out.println("City: " + city);
-			//TODO: print out all buildings for city
+			// print out all buildings for city
 		}
 		
 		for (Building building : connector.executeCriteriaQuery(connector.createCriteriaQueryForBuildingsWithFloorRange(200, 300))) {
