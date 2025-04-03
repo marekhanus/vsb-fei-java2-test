@@ -43,10 +43,10 @@ class CleaningBotTest {
 		Shelf shelf = new Shelf(2);
 		try {
 			shelf.insert(List.of(new Box(0, 0, 10, 1)));
-			Assertions.fail("Method insert shout raise an exception");
+			Assertions.fail("Method insert should raise an exception");
 		} catch (Exception ex) {
 			assertEquals(NotEnoughSpaceException.class, ex.getClass(),
-					"Method insert sdhould raise exception of type NotEnoughSpaceException");
+					"Method insert should raise exception of type NotEnoughSpaceException");
 		}
 	}
 
@@ -84,11 +84,11 @@ class CleaningBotTest {
 			assertTrue(
 					logMap.getOrDefault(Level.INFO, Collections.emptyList()).size()
 							+ logMap.getOrDefault(Level.DEBUG, Collections.emptyList()).size() >= 1,
-					"At least 1 message in proper level for informativ log shout be outputed.");
+					"At least 1 message in proper level for informative log should be outputted.");
 			assertTrue(
 					logMap.getOrDefault(Level.WARN, Collections.emptyList()).size()
 							+ logMap.getOrDefault(Level.ERROR, Collections.emptyList()).size() >= 1,
-					"At least 1 message in proper level for exception log shout be outputed.");
+					"At least 1 message in proper level for exception log should be outputted.");
 			/*
 			if (!Stream
 					.concat(logMap.getOrDefault(Level.WARN, Collections.emptyList()).stream(),
