@@ -10,7 +10,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
  */
 public class JpaConnector {
 
-	private EntityManager em;
+	private final EntityManager em;
 
 	public JpaConnector() {
 		//TODO:
