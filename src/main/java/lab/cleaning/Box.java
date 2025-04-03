@@ -2,6 +2,10 @@ package lab.cleaning;
 
 import lab.Tools;
 
+/**
+ * Refactor this class using the lombok library (where possible).
+ */
+//TODO:
 public class Box {
 
 	private int x;
