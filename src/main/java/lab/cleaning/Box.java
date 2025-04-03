@@ -3,7 +3,7 @@ package lab.cleaning;
 import lab.Tools;
 
 /**
- * Refactor this class using the lombok library (where possible).
+ * Refactor this class using the Lombok library (where possible).
  */
 //TODO:
 public class Box {

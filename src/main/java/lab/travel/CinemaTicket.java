@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import lab.Tools;
 
 /**
- * Using the lombok library, extend the class with:
+ * Using the Lombok library, annotate the class with:
  * - getters and setters for all instance variables
  * - listing using the toString method, which work correctly with inheritance
  * - the hashcode method, which works correctly with inheritance

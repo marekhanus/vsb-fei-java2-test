@@ -3,10 +3,10 @@ package lab.travel;
 import lab.Tools;
 
 /**
- * Using the lombok library, extend the class with:
+ * Using the Lombok library, annotate the class with:
  * - getters for all instance variables
  * - setter for password only
- * - a output using the toString method that does not contain the password
+ * - an output using the toString method that does not contain the password
  * - the hashcode method
  * - the equals method
  * - constructor with all parameters

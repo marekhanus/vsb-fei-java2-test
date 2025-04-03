@@ -6,7 +6,7 @@ import lab.Tools;
 
 /**
  * Create a valid entity (entity class) from this class 
- * using annotations from lombok library.
+ * using annotations from Lombok library.
  * The class will have:
  * - a constructor without parameters
  * - getters and setters for all instance variables
